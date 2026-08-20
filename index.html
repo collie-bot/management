@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>계근상 재고관리</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background:#fff;
+  color:#222;
+  font-size:15px;
+  padding-bottom:calc(16px + env(safe-area-inset-bottom));
+}
+
+button,input,select{
+  font:inherit;
+  font-size:15px;
+  -webkit-appearance:none;
+  border-radius:6px;
+}
+button{cursor:pointer}
+
+header{
+  background:#fff;
+  color:#111;
+  padding:16px 12px 8px;
+  text-align:center;
+}
+header h1{
+  margin:0;
+  font-size:24px;
+  font-weight:700;
+  letter-spacing:-0.5px;
+}
+
+.container{
+  max-width:800px;
+  margin:0 auto;
+  padding:0 12px;
+}
+
+.info-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+  margin-bottom:16px;
+  border:2px solid #3b62ba;
+}
+.info-table th, .info-table td{
+  background:#4a73cf;
+  color:white;
+  font-size:18px;
+  font-weight:600;
+  text-align:center;
+  padding:10px 8px;
+  border:1px solid #3b62ba;
+  width:50%;
+  white-space:nowrap;
+}
+.info-table th{
+  background:#3b62ba;
+}
+.clickable-user {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  background:#3b62ba;
+  border:2px solid #3b62ba;
+  margin-top:24px;
+  margin-bottom:12px;
+}
+.menu-btn{
+  background:#4a73cf;
+  color:white;
+  border:0;
+  aspect-ratio:1.3 / 1;
+  font-size:20px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #3b62ba;
+}
+.menu-btn:active{
+  background:#3b62ba;
+}
+
+.request-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  gap: 10px;
+}
+.request-main-btn {
+  flex: 1;
+  background: #3b62ba;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+.bell-btn {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #4a73cf;
+  color: white;
+  border: none;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+}
+.bell-icon {
+  width: 26px;
+  height: 26px;
+  stroke: #000;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.bell-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+}
+
+.top-nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  gap:8px;
+}
+.back-btn{
+  background:#6b7280;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  font-size:14px;
+  border-radius:6px;
+  white-space:nowrap;
+}
+
+.blue-table{
+  width:100%;
+  border-collapse:collapse;
+  border:2px solid #3b62ba;
+  text-align:center;
+}
+.blue-table th{
+  background:#4a73cf;
+  color:white;
+  padding:10px 4px;
+  font-size:15px;
+  border:1px solid #3b62ba;
+  font-weight:600;
+  white-space:nowrap;
+}
+.blue-table td{
+  padding:8px 4px;
+  border:1px solid #c8d4f0;
+  font-size:15px;
+  white-space:nowrap;
+}
+.blue-table tr:nth-child(even) td{
+  background:#f0f4fc;
+}
+.blue-table tr:nth-child(odd) td{
+  background:#e1e9f8;
+}
+
+.stock-control{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.stock-val{
+  font-weight:bold;
+  font-size:16px;
+  min-width:24px;
+  text-align:center;
+}
+
+.btn-adjust{
+  border:none;
+  font-size:18px;
+  width:32px;
+  height:32px;
+  line-height:32px;
+  padding:0;
+  border-radius:6px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin:0;
+}
+.btn-minus{
+  background-color:#fecdd3;
+  color:#111827;
+}
+.btn-plus{
+  background-color:#bbf7d0;
+  color:#111827;
+  font-weight:bold;
+}
+
+.login-overlay, .modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  padding:16px;
+}
+.login-box, .modal-box{
+  width:min(450px,100%);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background:white;
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+.login-box h2, .modal-box h2{
+  margin:0 0 14px;
+  font-size:18px;
+  text-align:center;
+}
+.login-box select{
+  width:100%;
+  padding:10px;
+  border:1px solid #ccc;
+  margin-bottom:14px;
+  font-size:15px;
+}
+.login-box button, .modal-box .confirm-btn{
+  width:100%;
+  padding:10px;
+  background:#4a73cf;
+  color:white;
+  border:none;
+  font-size:16px;
+  font-weight:bold;
+  border-radius:6px;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 18px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+}
+
+.todo-item input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+  background: #fff;
+  outline: none;
+  position: relative;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.todo-item input[type="checkbox"]:checked {
+  border-color: #000;
+  background-color: #000;
+}
+
+.todo-item input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 4px;
+  height: 9px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.todo-item.checked span {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.card{
+  background:#f9fafb;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:14px;
+  margin-top:12px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+label{
+  display:block;
+  font-weight:700;
+  font-size:14px;
+  margin-bottom:4px;
+}
+input, select{
+  width:100%;
+  padding:8px 10px;
+  border:1px solid #d1d5db;
+  background:#fff;
+  font-size:15px;
+}
+.category-input-group{
+  display:flex;
+  gap:6px;
+}
+.category-input-group select,
+.category-input-group input{
+  flex:1;
+}
+
+.primary-btn{
+  background:#4a73cf;
+  color:#fff;
+  border:0;
+  padding:12px 16px;
+  font-size:16px;
+  font-weight:bold;
+  width:100%;
+  margin-top:12px;
+}
+
+.status-tag{font-weight:800;padding:2px 6px;border-radius:4px;display:inline-block;font-size:14px;white-space:nowrap}
+.status-sufficient{color:#16a34a}
+.status-warning{color:#ffe600; text-shadow: 0px 0px 1px #888;}
+.status-lacking{color:#dc2626}
+
+.hidden{display:none!important}
+.header-actions{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:10px;
+}
+.small-btn{
+  font-size:13px;
+  padding:5px 10px;
+  background:#e5e7eb;
+  border:1px solid #ccc;
+}
+
+.mgmt-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+}
+.mgmt-table th, .mgmt-table td{
+  border:1px solid #e5e7eb;
+  padding:6px 4px;
+  text-align:center;
+  font-size:14px;
+  white-space:nowrap;
+}
+.mgmt-table th{
+  background:#f3f4f6;
+}
+.action-btn{
+  padding:4px 8px;
+  font-size:12px;
+  border:none;
+  border-radius:4px;
+  margin:0 1px;
+}
+.edit-btn{background:#eab308; color:white;}
+.del-btn{background:#ef4444; color:white;}
+
+.toggle-btn {
+  width: 100%;
+  text-align: left;
+  background: #4a73cf;
+  color: white;
+  padding: 10px 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.toggle-content {
+  margin-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<div id="loginOverlay" class="login-overlay hidden">
+  <div class="login-box">
+    <h2>확인자 선택</h2>
+    <select id="userSelectModal" onchange="loginDirect()"></select>
+    <button type="button" onclick="login()">확인</button>
+  </div>
+</div>
+
+<div id="requestModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h2>요청할 재료 선택 (객관식)</h2>
+    <p style="font-size:13px; color:#666; text-align:center; margin-top:-8px; margin-bottom:10px;">
+      요청할 재료를 목록에서 선택하세요.
+    </p>
+    <ul id="reqChoiceList" class="todo-list"></ul>
+    <div style="display:flex; gap:6px; margin-top:14px;">
+      <button type="button" class="confirm-btn" style="background:#6b7280; flex:1;" onclick="closeRequestModal()">취소</button>
+      <button type="button" class="confirm-btn" style="flex:1;" onclick="shareDataWithRequests()">선택 재료 공유하기</button>
+    </div>
+  </div>
+</div>
+
+<div id="noticeModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h2 style="color:#dc2626; margin-bottom:8px;">⚠️ 사야 할 재료 요청 알림</h2>
+    <p style="font-size:13px; color:#666; text-align:center; margin-top:0;">구매/확인한 항목은 체크박스를 선택하세요.</p>
+    <ul id="noticeTodoList" class="todo-list"></ul>
+    <button type="button" class="confirm-btn" onclick="closeNoticeModal()">확인</button>
+  </div>
+</div>
+
+<header>
+  <h1 id="pageTitle">계근상 재고관리</h1>
+  <div id="headerActions" class="header-actions hidden">
+    <button class="small-btn" onclick="shareData()">공유하기</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <table id="infoTable" class="info-table hidden">
+    <tr>
+      <th>확인자</th>
+      <td id="displayUser" onclick="handleUserClick()">-</td>
+    </tr>
+    <tr>
+      <th id="dateLabel">날짜</th>
+      <td id="displayDate">-</td>
+    </tr>
+  </table>
+
+  <section id="pageHome" class="page">
+    <div class="menu-grid">
+      <button class="menu-btn" onclick="navTo('survey')">재고조사</button>
+      <button class="menu-btn" onclick="navTo('status')">재고현황</button>
+      <button class="menu-btn" onclick="navTo('items')">품목등록</button>
+      <button class="menu-btn" onclick="navTo('manage')">품목/사용자 관리</button>
+    </div>
+
+    <div class="request-area">
+      <button class="request-main-btn" onclick="openRequestModal()">재료 요청</button>
+      <button class="bell-btn" onclick="openBellNotice()">
+        <svg class="bell-icon" viewBox="0 0 24 24">
+          <path d="M12 2a4 4 0 0 0-4 4v3.2c0 .9-.3 1.8-.9 2.5L5.6 13.6c-.8 1-.1 2.4 1.2 2.4h10.4c1.3 0 2-1.4 1.2-2.4l-1.5-1.9c-.6-.7-.9-1.6-.9-2.5V6a4 4 0 0 0-4-4z" />
+          <path d="M9.5 18a2.5 2.5 0 0 0 5 0" />
+        </svg>
+        <span id="bellBadge" class="bell-badge hidden">1</span>
+      </button>
+    </div>
+  </section>
+
+  <section id="pageSurvey" class="page hidden">
+    <div class="top-nav">
+      <button class="back-btn" onclick="navTo('home')">← 메인으로</button>
+      <select id="surveyCategory" onchange="onCategoryChangeDirect('survey')" style="width:150px;"></select>
+    </div>
+    
+    <table class="blue-table">
+      <thead>
+        <tr>
+          <th>품목</th>
+          <th>재고</th>
+          <th>상태</th>
+        </tr>
+      </thead>
+      <tbody id="surveyBody"></tbody>
+    </table>
+  </section>
+
+  <section id="pageStatus" class="page hidden">
+    <div class="top-nav">
+      <button class="back-btn" onclick="navTo('home')">← 메인으로</button>
+      <select id="statusCategory" onchange="onCategoryChangeDirect('status')" style="width:150px;"></select>
+    </div>
+
+    <table class="blue-table">
+      <thead>
+        <tr>
+          <th>품목</th>
+          <th>재고</th>
+          <th>상태</th>
+        </tr>
+      </thead>
+      <tbody id="statusBody"></tbody>
+    </table>
+  </section>
+
+  <section id="pageItems" class="page hidden">
+    <div class="top-nav">
+      <button class="back-btn" onclick="navTo('home')">← 메인으로</button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0; font-size:18px;">신규 품목 등록</h3>
+      <form id="itemForm">
+        <div class="grid">
+          <div>
+            <label>분류 (선택 또는 새로 입력)</label>
+            <div class="category-input-group">
+              <select id="itemCategorySelect" onchange="onCategorySelectChange()">
+                <option value="">-- 기존 선택 --</option>
+              </select>
+              <input id="itemCategoryInput" placeholder="분류를 추가하세요." autocomplete="off">
+            </div>
+            <div style="margin-top:6px; display:flex; gap:4px;">
+              <button type="button" class="action-btn edit-btn" style="flex:1;" onclick="editSelectedCategory()">선택 분류 수정</button>
+              <button type="button" class="action-btn del-btn" style="flex:1;" onclick="deleteSelectedCategory()">선택 분류 삭제</button>
+            </div>
+          </div>
+
+          <div>
+            <label>품목</label>
+            <input id="newItemName" placeholder="품목 이름을 입력하세요." required autocomplete="off">
+          </div>
+
+          <div>
+            <label>최소 재고 수</label>
+            <input id="itemMinStock" type="number" min="0" placeholder="최소 재고 수">
+          </div>
+        </div>
+
+        <button class="primary-btn" type="submit">품목 등록하기</button>
+      </form>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-top:0; font-size:18px;">신규 요청 재료 등록 (객관식용)</h3>
+      <form id="ingredientForm">
+        <div>
+          <label>재료 명칭</label>
+          <input id="newIngredientName" placeholder="재료 이름을 입력하세요 (예: 대파, 마늘 등)" required autocomplete="off">
+        </div>
+        <button class="primary-btn" type="submit" style="background:#3b62ba;">재료 등록하기</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="pageManage" class="page hidden">
+    <div class="top-nav">
+      <button class="back-btn" onclick="navTo('home')">← 메인으로</button>
+    </div>
+
+    <div class="card">
+      <button class="toggle-btn" onclick="toggleSection('itemMgmtToggle', 'itemMgmtArrow')">
+        <span>품목 관리</span>
+        <span id="itemMgmtArrow">▼</span>
+      </button>
+      <div id="itemMgmtToggle" class="toggle-content hidden">
+        <div style="margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+          <label style="margin:0; white-space:nowrap;">분류 필터:</label>
+          <select id="mgmtCategorySelect" onchange="renderItemMgmt()" style="width:auto; flex:1;"></select>
+        </div>
+        <table class="mgmt-table">
+          <thead>
+            <tr>
+              <th>분류</th>
+              <th>품목</th>
+              <th>최소재고</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="itemMgmtBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <button class="toggle-btn" onclick="toggleSection('ingMgmtToggle', 'ingMgmtArrow')">
+        <span>요청 재료 관리</span>
+        <span id="ingMgmtArrow">▼</span>
+      </button>
+      <div id="ingMgmtToggle" class="toggle-content hidden">
+        <table class="mgmt-table">
+          <thead>
+            <tr>
+              <th>재료 이름</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="ingMgmtBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0; font-size:18px;">신규 사용자 등록</h3>
+      <form id="userForm">
+        <div>
+          <label>사용자 이름</label>
+          <input id="newUserName" placeholder="등록할 사용자 이름 입력" required autocomplete="off">
+        </div>
+        <button class="primary-btn" type="submit">사용자 등록하기</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <button class="toggle-btn" onclick="toggleSection('userMgmtToggle', 'userMgmtArrow')">
+        <span>사용자 관리</span>
+        <span id="userMgmtArrow">▼</span>
+      </button>
+      <div id="userMgmtToggle" class="toggle-content hidden">
+        <table class="mgmt-table">
+          <thead>
+            <tr>
+              <th>사용자 이름</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="userMgmtBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const EMBEDDED_SHARED_SNAPSHOT = null;
+const LOCAL_KEY="restaurant_inventory_v9";
+const USER_KEY="restaurant_inventory_user_v9";
+const USERS_LIST_KEY="restaurant_inventory_users_list_v9";
+const REQUEST_ITEMS_KEY="restaurant_inventory_request_items_v9";
+const REGISTERED_INGREDIENTS_KEY="restaurant_inventory_registered_ingredients_v9";
+
+let categories=[
+  {id:"cat_1",name:"계근상"},
+  {id:"cat_2",name:"김치찜"},
+  {id:"cat_3",name:"밀면"}
+];
+
+let userList = [];
+let registeredIngredients = [];
+let data={items:[],records:[],categories:[]};
+let currentUser="";
+let currentTab="home";
+
+let requestList = [];
+
+function localDate(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function uid(prefix){
+  return prefix+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,9);
+}
+
+function esc(v){
+  return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+function categoryName(idOrName){
+  const found = categories.find(c=>c.id===idOrName || c.name===idOrName);
+  return found ? found.name : idOrName;
+}
+
+function normalizeData(){
+  if(!data || typeof data!=="object")data={items:[],records:[],categories:[]};
+  if(!Array.isArray(data.items))data.items=[];
+  if(!Array.isArray(data.records))data.records=[];
+  if(!Array.isArray(data.categories))data.categories=[];
+
+  if(data.categories.length > 0){
+    data.categories.forEach(c => {
+      if(!categories.some(cat => cat.name === c.name)){
+        categories.push(c);
+      }
+    });
+  }
+
+  data.items=data.items.map(i=>({
+    id:i.id||uid("item"),
+    categoryId:i.categoryId||categories[0].id,
+    name:String(i.name||""),
+    stock:Number.isFinite(Number(i.stock))?Number(i.stock):0,
+    minStock:Number.isFinite(Number(i.minStock))?Number(i.minStock):0,
+    createdAt:i.createdAt||localDate(),
+    createdBy:i.createdBy||"",
+    updatedBy:i.updatedBy||i.createdBy||"",
+    updatedAt:i.updatedAt||"",
+    checkedAt:i.checkedAt||i.createdAt||localDate()
+  })).filter(i=>i.name);
+}
+
+function saveLocal(){
+  normalizeData();
+  data.categories = categories;
+  localStorage.setItem(LOCAL_KEY,JSON.stringify(data));
+  localStorage.setItem(USERS_LIST_KEY, JSON.stringify(userList));
+  localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(requestList));
+  localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(registeredIngredients));
+
+  if(window.db && window.doc && window.setDoc){
+    const mainDocRef = window.doc(window.db, "inventory_app", "main_data");
+    window.setDoc(mainDocRef, {
+      data: data,
+      userList: userList,
+      requestList: requestList,
+      registeredIngredients: registeredIngredients,
+      updatedAt: new Date().toISOString()
+    }).catch(err => console.error("Firebase 저장 실패:", err));
+  }
+}
+
+function loadLocal(){
+  try{
+    const x=JSON.parse(localStorage.getItem(LOCAL_KEY));
+    if(x)data=x;
+  }catch(e){}
+  
+  try{
+    const uList=JSON.parse(localStorage.getItem(USERS_LIST_KEY));
+    if(Array.isArray(uList)) userList = uList;
+  }catch(e){}
+
+  try{
+    const rList=JSON.parse(localStorage.getItem(REQUEST_ITEMS_KEY));
+    if(Array.isArray(rList)) requestList = rList;
+  }catch(e){}
+
+  try{
+    const ingList=JSON.parse(localStorage.getItem(REGISTERED_INGREDIENTS_KEY));
+    if(Array.isArray(ingList)) registeredIngredients = ingList;
+  }catch(e){}
+
+  normalizeData();
+
+  const savedUser = localStorage.getItem(USER_KEY);
+  if(savedUser && userList.includes(savedUser)){
+    currentUser = savedUser;
+  } else if(userList.length > 0){
+    currentUser = userList[0];
+  } else {
+    currentUser = "";
+  }
+}
+
+function populateUserSelectModal(){
+  const modalSelect = document.getElementById("userSelectModal");
+  if(userList.length === 0){
+    modalSelect.innerHTML = '<option value="">(등록된 사용자 없음)</option>';
+  } else {
+    modalSelect.innerHTML = userList.map(u => `<option value="${esc(u)}"${u === currentUser ? ' selected' : ''}>${esc(u)}</option>`).join("");
+  }
+}
+
+function setupLogin(){
+  populateUserSelectModal();
+  document.getElementById("loginOverlay").classList.remove("hidden");
+}
+
+function login(){
+  const selectedName = document.getElementById("userSelectModal").value;
+  if(!selectedName){
+    document.getElementById("loginOverlay").classList.add("hidden");
+    return;
+  }
+  currentUser = selectedName;
+  localStorage.setItem(USER_KEY, currentUser);
+  document.getElementById("loginOverlay").classList.add("hidden");
+  updateHeaderInfo();
+  renderAll();
+}
+
+function loginDirect(){
+  login();
+}
+
+function handleUserClick(){
+  if(currentTab === 'survey'){
+    setupLogin();
+  }
+}
+
+function toggleSection(contentId, arrowId) {
+  const content = document.getElementById(contentId);
+  const arrow = document.getElementById(arrowId);
+  if (content.classList.contains('hidden')) {
+    content.classList.remove('hidden');
+    arrow.textContent = '▲';
+  } else {
+    content.classList.add('hidden');
+    arrow.textContent = '▼';
+  }
+}
+
+function navTo(tab){
+  currentTab=tab;
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  
+  const titles = {
+    home: "계근상 재고관리",
+    survey: "재고조사",
+    status: "재고현황",
+    items: "품목/재료 등록",
+    manage: "품목/사용자 관리"
+  };
+  document.getElementById("pageTitle").textContent = titles[tab] || "계근상 재고관리";
+
+  const headerActions = document.getElementById("headerActions");
+  if(tab === 'survey'){
+    headerActions.classList.remove("hidden");
+  } else {
+    headerActions.classList.add("hidden");
+  }
+
+  const infoTable = document.getElementById("infoTable");
+  const displayUser = document.getElementById("displayUser");
+
+  if(tab === 'survey' || tab === 'status'){
+    infoTable.classList.remove("hidden");
+    if(tab === 'survey'){
+      displayUser.classList.add("clickable-user");
+    } else {
+      displayUser.classList.remove("clickable-user");
+    }
+  } else {
+    infoTable.classList.add("hidden");
+  }
+
+  if(tab==='home'){
+    document.getElementById("pageHome").classList.remove("hidden");
+  }else if(tab==='survey'){
+    document.getElementById("pageSurvey").classList.remove("hidden");
+    renderSurvey();
+  }else if(tab==='status'){
+    document.getElementById("pageStatus").classList.remove("hidden");
+    renderStatus();
+  }else if(tab==='items'){
+    document.getElementById("pageItems").classList.remove("hidden");
+    renderItems();
+  }else if(tab==='manage'){
+    document.getElementById("pageManage").classList.remove("hidden");
+    renderUserMgmt();
+    renderItemMgmt();
+    renderIngMgmt();
+  }
+  updateHeaderInfo();
+}
+
+function updateHeaderInfo(){
+  document.getElementById("displayUser").textContent = currentUser || "(선택 필요)";
+  document.getElementById("dateLabel").textContent = "날짜";
+  document.getElementById("displayDate").textContent = localDate();
+}
+
+function populateCategorySelects(){
+  const lastSelected = document.getElementById("itemCategorySelect") ? document.getElementById("itemCategorySelect").value : "";
+
+  const options='<option value="all">전체 분류</option>'+
+    categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+
+  document.getElementById("surveyCategory").innerHTML=options;
+  document.getElementById("statusCategory").innerHTML=options;
+  
+  if(document.getElementById("mgmtCategorySelect")){
+    document.getElementById("mgmtCategorySelect").innerHTML = options;
+  }
+  
+  const formCategoryOptions = '<option value="">-- 기존 선택 --</option>' +
+    categories.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");
+  
+  const selectElem = document.getElementById("itemCategorySelect");
+  selectElem.innerHTML = formCategoryOptions;
+  if(lastSelected){
+    selectElem.value = lastSelected;
+  }
+}
+
+function onCategorySelectChange(){
+  const selectVal = document.getElementById("itemCategorySelect").value;
+  if(selectVal){
+    document.getElementById("itemCategoryInput").value = selectVal;
+  }
+}
+
+function onCategoryChangeDirect(type){
+  if(type === 'survey'){
+    renderSurvey();
+  } else if(type === 'status'){
+    renderStatus();
+  }
+}
+
+function editSelectedCategory(){
+  const selectElem = document.getElementById("itemCategorySelect");
+  const selectedName = selectElem.value;
+  if(!selectedName){
+    alert("수정할 분류를 선택해 주세요.");
+    return;
+  }
+  const newName = prompt("분류 이름을 수정하세요:", selectedName);
+  if(newName && newName.trim() !== "" && newName.trim() !== selectedName){
+    const trimmed = newName.trim();
+    const catObj = categories.find(c => c.name === selectedName);
+    if(catObj){
+      catObj.name = trimmed;
+      saveLocal();
+      populateCategorySelects();
+      document.getElementById("itemCategorySelect").value = trimmed;
+      document.getElementById("itemCategoryInput").value = trimmed;
+      renderItemMgmt();
+      renderSurvey();
+      renderStatus();
+    }
+  }
+}
+
+function deleteSelectedCategory(){
+  const selectElem = document.getElementById("itemCategorySelect");
+  const selectedName = selectElem.value;
+  if(!selectedName){
+    alert("삭제할 분류를 선택해 주세요.");
+    return;
+  }
+  if(confirm(`[${selectedName}] 분류를 삭제합니다.`)){
+    categories = categories.filter(c => c.name !== selectedName);
+    saveLocal();
+    populateCategorySelects();
+    document.getElementById("itemCategoryInput").value = "";
+    renderItemMgmt();
+    renderSurvey();
+    renderStatus();
+  }
+}
+
+function renderSurvey(){
+  const cat=document.getElementById("surveyCategory").value||"all";
+  const rows=data.items.filter(i=>cat==="all"||i.categoryId===cat);
+
+  document.getElementById("surveyBody").innerHTML=rows.length?rows.map(i=>{
+    const stock = Number(i.stock);
+    const minStock = Number(i.minStock || 0);
+
+    let statusTag = '충분';
+    let statusClass = 'status-sufficient';
+    if(stock < minStock){
+      statusTag = '위험';
+      statusClass = 'status-lacking';
+    }else if(stock === minStock){
+      statusTag = '부족';
+      statusClass = 'status-warning';
+    }
+
+    return `
+    <tr>
+      <td><b>${esc(i.name)}</b></td>
+      <td>
+        <div class="stock-control">
+          <button class="btn-adjust btn-minus" onclick="changeStock('${i.id}',-1)">-</button>
+          <span class="stock-val">${i.stock}</span>
+          <button class="btn-adjust btn-plus" onclick="changeStock('${i.id}',1)">+</button>
+        </div>
+      </td>
+      <td><span class="status-tag ${statusClass}">${statusTag}</span></td>
+    </tr>
+  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#fff;">등록된 품목이 없습니다.</td></tr>';
+}
+
+function renderStatus(){
+  const cat=document.getElementById("statusCategory").value||"all";
+  const rows=data.items.filter(i=>cat==="all"||i.categoryId===cat);
+
+  document.getElementById("statusBody").innerHTML=rows.length?rows.map(i=>{
+    const stock = Number(i.stock);
+    const minStock = Number(i.minStock || 0);
+
+    let statusTag = '충분';
+    let statusClass = 'status-sufficient';
+    if(stock < minStock){
+      statusTag = '위험';
+      statusClass = 'status-lacking';
+    }else if(stock === minStock){
+      statusTag = '부족';
+      statusClass = 'status-warning';
+    }
+
+    return `
+    <tr>
+      <td><b>${esc(i.name)}</b></td>
+      <td style="font-weight:bold;font-size:16px;">${i.stock}</td>
+      <td><span class="status-tag ${statusClass}">${statusTag}</span></td>
+    </tr>
+  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#fff;">등록된 품목이 없습니다.</td></tr>';
+}
+
+function changeStock(id,delta){
+  if(!currentUser){
+    setupLogin();
+    return;
+  }
+  const item=data.items.find(i=>i.id===id);
+  if(!item)return;
+
+  item.stock=Math.max(0, Number(item.stock)+delta);
+  item.updatedBy=currentUser;
+  item.updatedAt=new Date().toISOString();
+  item.checkedAt=localDate();
+
+  saveLocal();
+  renderSurvey();
+  updateHeaderInfo();
+}
+
+function renderItems(){
+  populateCategorySelects();
+}
+
+function renderUserMgmt(){
+  const tbody = document.getElementById("userMgmtBody");
+  if(!tbody) return;
+  if(userList.length === 0){
+    tbody.innerHTML = '<tr><td colspan="2">등록된 사용자가 없습니다.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = userList.map((u, idx) => `
+    <tr>
+      <td><b>${esc(u)}</b></td>
+      <td>
+        <button class="action-btn edit-btn" onclick="editUser(${idx})">수정</button>
+        <button class="action-btn del-btn" onclick="deleteUser(${idx})">삭제</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function editUser(idx){
+  const oldName = userList[idx];
+  const newName = prompt("사용자 이름을 수정하세요:", oldName);
+  if(newName && newName.trim() !== ""){
+    const trimmed = newName.trim();
+    userList[idx] = trimmed;
+    if(currentUser === oldName) currentUser = trimmed;
+    saveLocal();
+    renderUserMgmt();
+    updateHeaderInfo();
+  }
+}
+
+function deleteUser(idx){
+  const target = userList[idx];
+  if(confirm(`[${target}] 사용자를 삭제합니다.`)){
+    userList.splice(idx, 1);
+    if(currentUser === target){
+      currentUser = userList.length > 0 ? userList[0] : "";
+    }
+    saveLocal();
+    renderUserMgmt();
+    updateHeaderInfo();
+  }
+}
+
+function renderItemMgmt(){
+  const tbody = document.getElementById("itemMgmtBody");
+  if(!tbody) return;
+  
+  const mgmtCatSelect = document.getElementById("mgmtCategorySelect");
+  const selectedCat = mgmtCatSelect ? mgmtCatSelect.value : "all";
+
+  const rows = data.items.filter(i => selectedCat === "all" || i.categoryId === selectedCat);
+
+  if(rows.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4">등록된 품목이 없습니다.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(i => `
+    <tr>
+      <td>${esc(categoryName(i.categoryId))}</td>
+      <td><b>${esc(i.name)}</b></td>
+      <td>${i.minStock}</td>
+      <td>
+        <button class="action-btn edit-btn" onclick="editItem('${i.id}')">수정</button>
+        <button class="action-btn del-btn" onclick="deleteItem('${i.id}')">삭제</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function editItem(id){
+  const item = data.items.find(i => i.id === id);
+  if(!item) return;
+
+  const newName = prompt("품목 이름을 수정하세요:", item.name);
+  if(newName === null) return;
+  
+  const newMin = prompt("최소 재고 수를 수정하세요:", item.minStock);
+  if(newMin === null) return;
+
+  if(newName.trim() !== ""){
+    item.name = newName.trim();
+    item.minStock = Math.max(0, Number(newMin) || 0);
+    saveLocal();
+    renderItemMgmt();
+    renderSurvey();
+    renderStatus();
+  }
+}
+
+function deleteItem(id){
+  const item = data.items.find(i => i.id === id);
+  if(!item) return;
+
+  if(confirm(`[${item.name}] 품목을 삭제합니다.`)){
+    data.items = data.items.filter(i => i.id !== id);
+    saveLocal();
+    renderItemMgmt();
+    renderSurvey();
+    renderStatus();
+  }
+}
+
+function renderIngMgmt(){
+  const tbody = document.getElementById("ingMgmtBody");
+  if(!tbody) return;
+  if(registeredIngredients.length === 0){
+    tbody.innerHTML = '<tr><td colspan="2">등록된 재료가 없습니다.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = registeredIngredients.map((ing, idx) => `
+    <tr>
+      <td><b>${esc(ing.name)}</b></td>
+      <td>
+        <button class="action-btn edit-btn" onclick="editIngredient(${idx})">수정</button>
+        <button class="action-btn del-btn" onclick="deleteIngredient(${idx})">삭제</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function editIngredient(idx){
+  const oldIng = registeredIngredients[idx];
+  const newName = prompt("재료 이름을 수정하세요:", oldIng.name);
+  if(newName && newName.trim() !== ""){
+    registeredIngredients[idx].name = newName.trim();
+    saveLocal();
+    renderIngMgmt();
+  }
+}
+
+function deleteIngredient(idx){
+  const target = registeredIngredients[idx];
+  if(confirm(`[${target.name}] 재료를 삭제합니다.`)){
+    registeredIngredients.splice(idx, 1);
+    saveLocal();
+    renderIngMgmt();
+  }
+}
+
+document.getElementById("userForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const nameInput = document.getElementById("newUserName");
+  const name = nameInput.value.trim();
+  if(!name) return;
+
+  if(!userList.includes(name)){
+    userList.push(name);
+    if(!currentUser) currentUser = name;
+    saveLocal();
+    renderUserMgmt();
+    updateHeaderInfo();
+  }
+  nameInput.value = "";
+  nameInput.focus();
+});
+
+document.getElementById("ingredientForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const ingInput = document.getElementById("newIngredientName");
+  const name = ingInput.value.trim();
+  if(!name) return;
+
+  if(!registeredIngredients.some(i => i.name === name)){
+    registeredIngredients.push({ id: uid("ing"), name: name });
+    saveLocal();
+  } else {
+    alert("이미 등록되어 있는 재료입니다.");
+  }
+  ingInput.value = "";
+  ingInput.focus();
+  renderIngMgmt();
+});
+
+document.getElementById("itemCategoryInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    document.getElementById("newItemName").focus();
+  }
+});
+
+document.getElementById("newItemName").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    document.getElementById("itemMinStock").focus();
+  }
+});
+
+document.getElementById("itemForm").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const categoryInput = document.getElementById("itemCategoryInput").value.trim();
+  const nameInput = document.getElementById("newItemName");
+  const minStockInput = document.getElementById("itemMinStock");
+  
+  const name = nameInput.value.trim();
+  const minStockVal = minStockInput.value;
+
+  if(!categoryInput || !name){
+    return;
+  }
+
+  let catObj = categories.find(c => c.name === categoryInput);
+  if(!catObj){
+    catObj = { id: uid("cat"), name: categoryInput };
+    categories.push(catObj);
+  }
+
+  const stock = 0;
+  const minStock = minStockVal===""?0:Number(minStockVal);
+
+  const existing = data.items.find(i=>i.name===name && (i.categoryId===catObj.id || i.categoryId===catObj.name));
+
+  if(existing){
+    existing.categoryId = catObj.id;
+    existing.minStock = minStock;
+    existing.updatedBy = currentUser;
+    existing.updatedAt = new Date().toISOString();
+    existing.checkedAt = localDate();
+  }else{
+    data.items.push({
+      id: uid("item"),
+      categoryId: catObj.id,
+      name,
+      stock,
+      minStock,
+      createdAt: localDate(),
+      createdBy: currentUser,
+      updatedBy: currentUser,
+      updatedAt: new Date().toISOString(),
+      checkedAt: localDate()
+    });
+  }
+
+  saveLocal();
+
+  nameInput.value = "";
+  minStockInput.value = "";
+  
+  populateCategorySelects();
+  document.getElementById("itemCategorySelect").value = catObj.name;
+  document.getElementById("itemCategoryInput").value = catObj.name;
+
+  renderItemMgmt();
+  nameInput.focus();
+});
+
+function openRequestModal(){
+  renderReqChoiceList();
+  document.getElementById("requestModal").classList.remove("hidden");
+}
+
+function closeRequestModal(){
+  document.getElementById("requestModal").classList.add("hidden");
+}
+
+function renderReqChoiceList(){
+  const ul = document.getElementById("reqChoiceList");
+  if(registeredIngredients.length === 0){
+    ul.innerHTML = '<li style="text-align:center; color:#999; padding:10px;">등록된 재료가 없습니다.<br>품목/재료 등록 탭에서 먼저 재료를 등록하세요.</li>';
+    return;
+  }
+  ul.innerHTML = registeredIngredients.map(ing => `
+    <li class="todo-item">
+      <input type="checkbox" class="req-choice-cb" value="${esc(ing.name)}" id="ing_cb_${ing.id}">
+      <label for="ing_cb_${ing.id}" style="margin:0; font-weight:normal; cursor:pointer; flex:1;">${esc(ing.name)}</label>
+    </li>
+  `).join("");
+}
+
+function shareDataWithRequests(){
+  const checkboxes = document.querySelectorAll(".req-choice-cb:checked");
+  if(checkboxes.length === 0){
+    alert("공유할 재료를 1개 이상 선택해주세요.");
+    return;
+  }
+  
+  requestList = Array.from(checkboxes).map(cb => ({
+    id: uid("req"),
+    text: cb.value,
+    checked: false
+  }));
+
+  saveLocal();
+  closeRequestModal();
+  updateBellBadge();
+}
+
+function openBellNotice(){
+  if(requestList.length === 0){
+    alert("현재 남아있는 재료 요청 알림이 없습니다.");
+    return;
+  }
+  renderNoticeList();
+  document.getElementById("noticeModal").classList.remove("hidden");
+}
+
+function closeNoticeModal(){
+  const allChecked = requestList.length > 0 && requestList.every(i => i.checked);
+  if(allChecked){
+    requestList = [];
+  }
+  saveLocal();
+  updateBellBadge();
+  document.getElementById("noticeModal").classList.add("hidden");
+}
+
+function toggleNoticeCheck(id){
+  const item = requestList.find(i => i.id === id);
+  if(item){
+    item.checked = !item.checked;
+    saveLocal();
+    renderNoticeList();
+  }
+}
+
+function renderNoticeList(){
+  const ul = document.getElementById("noticeTodoList");
+  if(requestList.length === 0){
+    ul.innerHTML = '<li style="text-align:center; color:#999; padding:10px;">재료 요청 내역이 없습니다.</li>';
+    return;
+  }
+  ul.innerHTML = requestList.map(item => `
+    <li class="todo-item ${item.checked ? 'checked' : ''}">
+      <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleNoticeCheck('${item.id}')">
+      <span>${esc(item.text)}</span>
+    </li>
+  `).join("");
+}
+
+function updateBellBadge(){
+  const badge = document.getElementById("bellBadge");
+  if(requestList.length > 0){
+    badge.classList.remove("hidden");
+  } else {
+    badge.classList.add("hidden");
+  }
+}
+
+async function shareData(){
+  try{
+    normalizeData();
+    const payload = {
+      data: data,
+      userList: userList,
+      requestList: requestList,
+      registeredIngredients: registeredIngredients,
+      isSharedSnapshot: true
+    };
+
+    const snapshot=JSON.stringify(payload)
+      .replace(/\\/g,"\\\\")
+      .replace(/`/g,"\\`")
+      .replace(/<\/script/gi,"<\\/script");
+
+    let shareHTML=document.documentElement.outerHTML;
+    
+    shareHTML = shareHTML.replace(/let currentUser=".*?";/, 'let currentUser="";');
+    
+    shareHTML=shareHTML.replace(
+      /const EMBEDDED_SHARED_SNAPSHOT = .*?;/s,
+      `const EMBEDDED_SHARED_SNAPSHOT = JSON.parse(\`${snapshot}\`);`
+    );
+
+    const blob=new Blob(["<!DOCTYPE html>\n"+shareHTML],{type:"text/html;charset=utf-8"});
+    const file=new File([blob],"계근상_재고관리.html",{type:"text/html"});
+
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        title:"재고관리 Data",
+        files:[file]
+      });
+      return;
+    }
+
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="계근상_재고관리.html";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch(err){
+    if(err.name!=="AbortError") return;
+  }
+}
+
+function renderAll(){
+  populateCategorySelects();
+  updateHeaderInfo();
+  renderUserMgmt();
+  renderItemMgmt();
+  renderIngMgmt();
+  updateBellBadge();
+  
+  if(currentTab === 'survey') renderSurvey();
+  if(currentTab === 'status') renderStatus();
+}
+
+loadLocal();
+
+if(EMBEDDED_SHARED_SNAPSHOT){
+  try{
+    if(EMBEDDED_SHARED_SNAPSHOT.data){
+      data = EMBEDDED_SHARED_SNAPSHOT.data;
+    } else {
+      data = EMBEDDED_SHARED_SNAPSHOT;
+    }
+    if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.userList)){
+      userList = EMBEDDED_SHARED_SNAPSHOT.userList;
+    }
+    if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.requestList)){
+      requestList = EMBEDDED_SHARED_SNAPSHOT.requestList;
+    }
+    if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.registeredIngredients)){
+      registeredIngredients = EMBEDDED_SHARED_SNAPSHOT.registeredIngredients;
+    }
+    normalizeData();
+    saveLocal();
+
+    if(EMBEDDED_SHARED_SNAPSHOT.isSharedSnapshot && requestList.length > 0){
+      setTimeout(() => {
+        openBellNotice();
+      }, 300);
+    }
+  }catch(e){}
+}
+
+navTo('home');
+renderAll();
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCNiAEn7XnA0_GbszPlfI1ZlWkrmEEyWe8",
+    authDomain: "management-2974b.firebaseapp.com",
+    projectId: "management-2974b",
+    storageBucket: "management-2974b.firebasestorage.app",
+    messagingSenderId: "647364493273",
+    appId: "1:647364493273:web:af5592bca986bc59e6a3c8",
+    measurementId: "G-273BQHHMYS"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.doc = doc;
+  window.setDoc = setDoc;
+
+  const mainDocRef = doc(db, "inventory_app", "main_data");
+  
+  onSnapshot(mainDocRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const serverData = docSnap.data();
+      if (serverData.data) window.data = serverData.data;
+      if (serverData.userList) window.userList = serverData.userList;
+      if (serverData.requestList) window.requestList = serverData.requestList;
+      if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
+      
+      window.normalizeData();
+      window.renderAll();
+    }
+  }, (err) => {
+    console.error("Firestore 실시간 수신 오류:", err);
+  });
+</script>
+</body>
+</html>
