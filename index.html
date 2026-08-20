@@ -685,19 +685,19 @@ const USERS_LIST_KEY="restaurant_inventory_users_list_v9";
 const REQUEST_ITEMS_KEY="restaurant_inventory_request_items_v9";
 const REGISTERED_INGREDIENTS_KEY="restaurant_inventory_registered_ingredients_v9";
 
-let categories=[
+window.categories=[
   {id:"cat_1",name:"계근상"},
   {id:"cat_2",name:"김치찜"},
   {id:"cat_3",name:"밀면"}
 ];
 
-let userList = [];
-let registeredIngredients = [];
-let data={items:[],records:[],categories:[]};
+window.userList = [];
+window.registeredIngredients = [];
+window.data={items:[],records:[],categories:[]};
 let currentUser="";
 let currentTab="home";
 
-let requestList = [];
+window.requestList = [];
 
 function localDate(){
   const d=new Date();
@@ -713,27 +713,27 @@ function esc(v){
 }
 
 function categoryName(idOrName){
-  const found = categories.find(c=>c.id===idOrName || c.name===idOrName);
+  const found = window.categories.find(c=>c.id===idOrName || c.name===idOrName);
   return found ? found.name : idOrName;
 }
 
-function normalizeData(){
-  if(!data || typeof data!=="object")data={items:[],records:[],categories:[]};
-  if(!Array.isArray(data.items))data.items=[];
-  if(!Array.isArray(data.records))data.records=[];
-  if(!Array.isArray(data.categories))data.categories=[];
+window.normalizeData = function(){
+  if(!window.data || typeof window.data!=="object") window.data={items:[],records:[],categories:[]};
+  if(!Array.isArray(window.data.items)) window.data.items=[];
+  if(!Array.isArray(window.data.records)) window.data.records=[];
+  if(!Array.isArray(window.data.categories)) window.data.categories=[];
 
-  if(data.categories.length > 0){
-    data.categories.forEach(c => {
-      if(!categories.some(cat => cat.name === c.name)){
-        categories.push(c);
+  if(window.data.categories.length > 0){
+    window.data.categories.forEach(c => {
+      if(!window.categories.some(cat => cat.name === c.name)){
+        window.categories.push(c);
       }
     });
   }
 
-  data.items=data.items.map(i=>({
+  window.data.items=window.data.items.map(i=>({
     id:i.id||uid("item"),
-    categoryId:i.categoryId||categories[0].id,
+    categoryId:i.categoryId||window.categories[0].id,
     name:String(i.name||""),
     stock:Number.isFinite(Number(i.stock))?Number(i.stock):0,
     minStock:Number.isFinite(Number(i.minStock))?Number(i.minStock):0,
@@ -746,12 +746,12 @@ function normalizeData(){
 }
 
 function saveLocal(){
-  normalizeData();
-  data.categories = categories;
-  localStorage.setItem(LOCAL_KEY,JSON.stringify(data));
-  localStorage.setItem(USERS_LIST_KEY, JSON.stringify(userList));
-  localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(requestList));
-  localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(registeredIngredients));
+  window.normalizeData();
+  window.data.categories = window.categories;
+  localStorage.setItem(LOCAL_KEY,JSON.stringify(window.data));
+  localStorage.setItem(USERS_LIST_KEY, JSON.stringify(window.userList));
+  localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(window.requestList));
+  localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(window.registeredIngredients));
 
   if(window.saveToFirestore){
     window.saveToFirestore();
@@ -761,31 +761,31 @@ function saveLocal(){
 function loadLocal(){
   try{
     const x=JSON.parse(localStorage.getItem(LOCAL_KEY));
-    if(x)data=x;
+    if(x) window.data=x;
   }catch(e){}
   
   try{
     const uList=JSON.parse(localStorage.getItem(USERS_LIST_KEY));
-    if(Array.isArray(uList)) userList = uList;
+    if(Array.isArray(uList)) window.userList = uList;
   }catch(e){}
 
   try{
     const rList=JSON.parse(localStorage.getItem(REQUEST_ITEMS_KEY));
-    if(Array.isArray(rList)) requestList = rList;
+    if(Array.isArray(rList)) window.requestList = rList;
   }catch(e){}
 
   try{
     const ingList=JSON.parse(localStorage.getItem(REGISTERED_INGREDIENTS_KEY));
-    if(Array.isArray(ingList)) registeredIngredients = ingList;
+    if(Array.isArray(ingList)) window.registeredIngredients = ingList;
   }catch(e){}
 
-  normalizeData();
+  window.normalizeData();
 
   const savedUser = localStorage.getItem(USER_KEY);
-  if(savedUser && userList.includes(savedUser)){
+  if(savedUser && window.userList.includes(savedUser)){
     currentUser = savedUser;
-  } else if(userList.length > 0){
-    currentUser = userList[0];
+  } else if(window.userList.length > 0){
+    currentUser = window.userList[0];
   } else {
     currentUser = "";
   }
@@ -793,10 +793,10 @@ function loadLocal(){
 
 function populateUserSelectModal(){
   const modalSelect = document.getElementById("userSelectModal");
-  if(userList.length === 0){
+  if(window.userList.length === 0){
     modalSelect.innerHTML = '<option value="">(등록된 사용자 없음)</option>';
   } else {
-    modalSelect.innerHTML = userList.map(u => `<option value="${esc(u)}"${u === currentUser ? ' selected' : ''}>${esc(u)}</option>`).join("");
+    modalSelect.innerHTML = window.userList.map(u => `<option value="${esc(u)}"${u === currentUser ? ' selected' : ''}>${esc(u)}</option>`).join("");
   }
 }
 
@@ -904,7 +904,7 @@ function populateCategorySelects(){
   const lastSelected = document.getElementById("itemCategorySelect") ? document.getElementById("itemCategorySelect").value : "";
 
   const options='<option value="all">전체 분류</option>'+
-    categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+    window.categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
 
   document.getElementById("surveyCategory").innerHTML=options;
   document.getElementById("statusCategory").innerHTML=options;
@@ -914,7 +914,7 @@ function populateCategorySelects(){
   }
   
   const formCategoryOptions = '<option value="">-- 기존 선택 --</option>' +
-    categories.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");
+    window.categories.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");
   
   const selectElem = document.getElementById("itemCategorySelect");
   selectElem.innerHTML = formCategoryOptions;
@@ -948,7 +948,7 @@ function editSelectedCategory(){
   const newName = prompt("분류 이름을 수정하세요:", selectedName);
   if(newName && newName.trim() !== "" && newName.trim() !== selectedName){
     const trimmed = newName.trim();
-    const catObj = categories.find(c => c.name === selectedName);
+    const catObj = window.categories.find(c => c.name === selectedName);
     if(catObj){
       catObj.name = trimmed;
       saveLocal();
@@ -970,7 +970,7 @@ function deleteSelectedCategory(){
     return;
   }
   if(confirm(`[${selectedName}] 분류를 삭제합니다.`)){
-    categories = categories.filter(c => c.name !== selectedName);
+    window.categories = window.categories.filter(c => c.name !== selectedName);
     saveLocal();
     populateCategorySelects();
     document.getElementById("itemCategoryInput").value = "";
@@ -982,7 +982,7 @@ function deleteSelectedCategory(){
 
 function renderSurvey(){
   const cat=document.getElementById("surveyCategory").value||"all";
-  const rows=data.items.filter(i=>cat==="all"||i.categoryId===cat);
+  const rows=window.data.items.filter(i=>cat==="all"||i.categoryId===cat);
 
   document.getElementById("surveyBody").innerHTML=rows.length?rows.map(i=>{
     const stock = Number(i.stock);
@@ -1015,7 +1015,7 @@ function renderSurvey(){
 
 function renderStatus(){
   const cat=document.getElementById("statusCategory").value||"all";
-  const rows=data.items.filter(i=>cat==="all"||i.categoryId===cat);
+  const rows=window.data.items.filter(i=>cat==="all"||i.categoryId===cat);
 
   document.getElementById("statusBody").innerHTML=rows.length?rows.map(i=>{
     const stock = Number(i.stock);
@@ -1045,7 +1045,7 @@ function changeStock(id,delta){
     setupLogin();
     return;
   }
-  const item=data.items.find(i=>i.id===id);
+  const item=window.data.items.find(i=>i.id===id);
   if(!item)return;
 
   item.stock=Math.max(0, Number(item.stock)+delta);
@@ -1065,11 +1065,11 @@ function renderItems(){
 function renderUserMgmt(){
   const tbody = document.getElementById("userMgmtBody");
   if(!tbody) return;
-  if(userList.length === 0){
+  if(window.userList.length === 0){
     tbody.innerHTML = '<tr><td colspan="2">등록된 사용자가 없습니다.</td></tr>';
     return;
   }
-  tbody.innerHTML = userList.map((u, idx) => `
+  tbody.innerHTML = window.userList.map((u, idx) => `
     <tr>
       <td><b>${esc(u)}</b></td>
       <td>
@@ -1081,11 +1081,11 @@ function renderUserMgmt(){
 }
 
 function editUser(idx){
-  const oldName = userList[idx];
+  const oldName = window.userList[idx];
   const newName = prompt("사용자 이름을 수정하세요:", oldName);
   if(newName && newName.trim() !== ""){
     const trimmed = newName.trim();
-    userList[idx] = trimmed;
+    window.userList[idx] = trimmed;
     if(currentUser === oldName) currentUser = trimmed;
     saveLocal();
     renderUserMgmt();
@@ -1094,11 +1094,11 @@ function editUser(idx){
 }
 
 function deleteUser(idx){
-  const target = userList[idx];
+  const target = window.userList[idx];
   if(confirm(`[${target}] 사용자를 삭제합니다.`)){
-    userList.splice(idx, 1);
+    window.userList.splice(idx, 1);
     if(currentUser === target){
-      currentUser = userList.length > 0 ? userList[0] : "";
+      currentUser = window.userList.length > 0 ? window.userList[0] : "";
     }
     saveLocal();
     renderUserMgmt();
@@ -1113,7 +1113,7 @@ function renderItemMgmt(){
   const mgmtCatSelect = document.getElementById("mgmtCategorySelect");
   const selectedCat = mgmtCatSelect ? mgmtCatSelect.value : "all";
 
-  const rows = data.items.filter(i => selectedCat === "all" || i.categoryId === selectedCat);
+  const rows = window.data.items.filter(i => selectedCat === "all" || i.categoryId === selectedCat);
 
   if(rows.length === 0){
     tbody.innerHTML = '<tr><td colspan="4">등록된 품목이 없습니다.</td></tr>';
@@ -1133,7 +1133,7 @@ function renderItemMgmt(){
 }
 
 function editItem(id){
-  const item = data.items.find(i => i.id === id);
+  const item = window.data.items.find(i => i.id === id);
   if(!item) return;
 
   const newName = prompt("품목 이름을 수정하세요:", item.name);
@@ -1153,11 +1153,11 @@ function editItem(id){
 }
 
 function deleteItem(id){
-  const item = data.items.find(i => i.id === id);
+  const item = window.data.items.find(i => i.id === id);
   if(!item) return;
 
   if(confirm(`[${item.name}] 품목을 삭제합니다.`)){
-    data.items = data.items.filter(i => i.id !== id);
+    window.data.items = window.data.items.filter(i => i.id !== id);
     saveLocal();
     renderItemMgmt();
     renderSurvey();
@@ -1168,11 +1168,11 @@ function deleteItem(id){
 function renderIngMgmt(){
   const tbody = document.getElementById("ingMgmtBody");
   if(!tbody) return;
-  if(registeredIngredients.length === 0){
+  if(window.registeredIngredients.length === 0){
     tbody.innerHTML = '<tr><td colspan="2">등록된 재료가 없습니다.</td></tr>';
     return;
   }
-  tbody.innerHTML = registeredIngredients.map((ing, idx) => `
+  tbody.innerHTML = window.registeredIngredients.map((ing, idx) => `
     <tr>
       <td><b>${esc(ing.name)}</b></td>
       <td>
@@ -1184,19 +1184,19 @@ function renderIngMgmt(){
 }
 
 function editIngredient(idx){
-  const oldIng = registeredIngredients[idx];
+  const oldIng = window.registeredIngredients[idx];
   const newName = prompt("재료 이름을 수정하세요:", oldIng.name);
   if(newName && newName.trim() !== ""){
-    registeredIngredients[idx].name = newName.trim();
+    window.registeredIngredients[idx].name = newName.trim();
     saveLocal();
     renderIngMgmt();
   }
 }
 
 function deleteIngredient(idx){
-  const target = registeredIngredients[idx];
+  const target = window.registeredIngredients[idx];
   if(confirm(`[${target.name}] 재료를 삭제합니다.`)){
-    registeredIngredients.splice(idx, 1);
+    window.registeredIngredients.splice(idx, 1);
     saveLocal();
     renderIngMgmt();
   }
@@ -1208,8 +1208,8 @@ document.getElementById("userForm").addEventListener("submit", e => {
   const name = nameInput.value.trim();
   if(!name) return;
 
-  if(!userList.includes(name)){
-    userList.push(name);
+  if(!window.userList.includes(name)){
+    window.userList.push(name);
     if(!currentUser) currentUser = name;
     saveLocal();
     renderUserMgmt();
@@ -1225,8 +1225,8 @@ document.getElementById("ingredientForm").addEventListener("submit", e => {
   const name = ingInput.value.trim();
   if(!name) return;
 
-  if(!registeredIngredients.some(i => i.name === name)){
-    registeredIngredients.push({ id: uid("ing"), name: name });
+  if(!window.registeredIngredients.some(i => i.name === name)){
+    window.registeredIngredients.push({ id: uid("ing"), name: name });
     saveLocal();
   } else {
     alert("이미 등록되어 있는 재료입니다.");
@@ -1264,16 +1264,16 @@ document.getElementById("itemForm").addEventListener("submit", e => {
     return;
   }
 
-  let catObj = categories.find(c => c.name === categoryInput);
+  let catObj = window.categories.find(c => c.name === categoryInput);
   if(!catObj){
     catObj = { id: uid("cat"), name: categoryInput };
-    categories.push(catObj);
+    window.categories.push(catObj);
   }
 
   const stock = 0;
   const minStock = minStockVal===""?0:Number(minStockVal);
 
-  const existing = data.items.find(i=>i.name===name && (i.categoryId===catObj.id || i.categoryId===catObj.name));
+  const existing = window.data.items.find(i=>i.name===name && (i.categoryId===catObj.id || i.categoryId===catObj.name));
 
   if(existing){
     existing.categoryId = catObj.id;
@@ -1282,7 +1282,7 @@ document.getElementById("itemForm").addEventListener("submit", e => {
     existing.updatedAt = new Date().toISOString();
     existing.checkedAt = localDate();
   }else{
-    data.items.push({
+    window.data.items.push({
       id: uid("item"),
       categoryId: catObj.id,
       name,
@@ -1320,11 +1320,11 @@ function closeRequestModal(){
 
 function renderReqChoiceList(){
   const ul = document.getElementById("reqChoiceList");
-  if(registeredIngredients.length === 0){
+  if(window.registeredIngredients.length === 0){
     ul.innerHTML = '<li style="text-align:center; color:#999; padding:10px;">등록된 재료가 없습니다.<br>품목/재료 등록 탭에서 먼저 재료를 등록하세요.</li>';
     return;
   }
-  ul.innerHTML = registeredIngredients.map(ing => `
+  ul.innerHTML = window.registeredIngredients.map(ing => `
     <li class="todo-item">
       <input type="checkbox" class="req-choice-cb" value="${esc(ing.name)}" id="ing_cb_${ing.id}">
       <label for="ing_cb_${ing.id}" style="margin:0; font-weight:normal; cursor:pointer; flex:1;">${esc(ing.name)}</label>
@@ -1339,7 +1339,7 @@ function shareDataWithRequests(){
     return;
   }
   
-  requestList = Array.from(checkboxes).map(cb => ({
+  window.requestList = Array.from(checkboxes).map(cb => ({
     id: uid("req"),
     text: cb.value,
     checked: false
@@ -1351,7 +1351,7 @@ function shareDataWithRequests(){
 }
 
 function openBellNotice(){
-  if(requestList.length === 0){
+  if(window.requestList.length === 0){
     alert("현재 남아있는 재료 요청 알림이 없습니다.");
     return;
   }
@@ -1360,9 +1360,9 @@ function openBellNotice(){
 }
 
 function closeNoticeModal(){
-  const allChecked = requestList.length > 0 && requestList.every(i => i.checked);
+  const allChecked = window.requestList.length > 0 && window.requestList.every(i => i.checked);
   if(allChecked){
-    requestList = [];
+    window.requestList = [];
   }
   saveLocal();
   updateBellBadge();
@@ -1370,7 +1370,7 @@ function closeNoticeModal(){
 }
 
 function toggleNoticeCheck(id){
-  const item = requestList.find(i => i.id === id);
+  const item = window.requestList.find(i => i.id === id);
   if(item){
     item.checked = !item.checked;
     saveLocal();
@@ -1380,11 +1380,11 @@ function toggleNoticeCheck(id){
 
 function renderNoticeList(){
   const ul = document.getElementById("noticeTodoList");
-  if(requestList.length === 0){
+  if(window.requestList.length === 0){
     ul.innerHTML = '<li style="text-align:center; color:#999; padding:10px;">재료 요청 내역이 없습니다.</li>';
     return;
   }
-  ul.innerHTML = requestList.map(item => `
+  ul.innerHTML = window.requestList.map(item => `
     <li class="todo-item ${item.checked ? 'checked' : ''}">
       <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleNoticeCheck('${item.id}')">
       <span>${esc(item.text)}</span>
@@ -1394,7 +1394,7 @@ function renderNoticeList(){
 
 function updateBellBadge(){
   const badge = document.getElementById("bellBadge");
-  if(requestList.length > 0){
+  if(window.requestList.length > 0){
     badge.classList.remove("hidden");
   } else {
     badge.classList.add("hidden");
@@ -1403,13 +1403,13 @@ function updateBellBadge(){
 
 async function shareData(){
   try{
-    normalizeData();
+    window.normalizeData();
     const payload = {
-      data: data,
-      userList: userList,
-      requestList: requestList,
-      registeredIngredients: registeredIngredients,
-      categories: categories,
+      data: window.data,
+      userList: window.userList,
+      requestList: window.requestList,
+      registeredIngredients: window.registeredIngredients,
+      categories: window.categories,
       isSharedSnapshot: true
     };
 
@@ -1451,7 +1451,7 @@ async function shareData(){
   }
 }
 
-function renderAll(){
+window.renderAll = function(){
   populateCategorySelects();
   updateHeaderInfo();
   renderUserMgmt();
@@ -1468,26 +1468,26 @@ loadLocal();
 if(EMBEDDED_SHARED_SNAPSHOT){
   try{
     if(EMBEDDED_SHARED_SNAPSHOT.data){
-      data = EMBEDDED_SHARED_SNAPSHOT.data;
+      window.data = EMBEDDED_SHARED_SNAPSHOT.data;
     } else {
-      data = EMBEDDED_SHARED_SNAPSHOT;
+      window.data = EMBEDDED_SHARED_SNAPSHOT;
     }
     if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.userList)){
-      userList = EMBEDDED_SHARED_SNAPSHOT.userList;
+      window.userList = EMBEDDED_SHARED_SNAPSHOT.userList;
     }
     if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.requestList)){
-      requestList = EMBEDDED_SHARED_SNAPSHOT.requestList;
+      window.requestList = EMBEDDED_SHARED_SNAPSHOT.requestList;
     }
     if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.registeredIngredients)){
-      registeredIngredients = EMBEDDED_SHARED_SNAPSHOT.registeredIngredients;
+      window.registeredIngredients = EMBEDDED_SHARED_SNAPSHOT.registeredIngredients;
     }
     if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.categories)){
-      categories = EMBEDDED_SHARED_SNAPSHOT.categories;
+      window.categories = EMBEDDED_SHARED_SNAPSHOT.categories;
     }
-    normalizeData();
+    window.normalizeData();
     saveLocal();
 
-    if(EMBEDDED_SHARED_SNAPSHOT.isSharedSnapshot && requestList.length > 0){
+    if(EMBEDDED_SHARED_SNAPSHOT.isSharedSnapshot && window.requestList.length > 0){
       setTimeout(() => {
         openBellNotice();
       }, 300);
@@ -1496,7 +1496,7 @@ if(EMBEDDED_SHARED_SNAPSHOT){
 }
 
 navTo('home');
-renderAll();
+window.renderAll();
 </script>
 
 <script type="module">
@@ -1515,7 +1515,6 @@ renderAll();
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-
   const mainDocRef = doc(db, "inventory_app", "main_data");
 
   window.saveToFirestore = function() {
@@ -1538,8 +1537,8 @@ renderAll();
       if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
       if (serverData.categories) window.categories = serverData.categories;
       
-      window.normalizeData();
-      window.renderAll();
+      if(window.normalizeData) window.normalizeData();
+      if(window.renderAll) window.renderAll();
     }
   }, (err) => {
     console.error("Firestore 실시간 수신 오류:", err);
