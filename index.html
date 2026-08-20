@@ -9,8 +9,8 @@
 body{
   margin:0;
   font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background:#fff;
-  color:#222;
+  background:#121212;
+  color:#e0e0e0;
   font-size:15px;
   padding-bottom:calc(16px + env(safe-area-inset-bottom));
 }
@@ -24,10 +24,11 @@ button,input,select{
 button{cursor:pointer}
 
 header{
-  background:#fff;
-  color:#111;
+  background:#1e1e1e;
+  color:#ffffff;
   padding:16px 12px 8px;
   text-align:center;
+  border-bottom:1px solid #333;
 }
 header h1{
   margin:0;
@@ -47,21 +48,21 @@ header h1{
   border-collapse:collapse;
   margin-top:12px;
   margin-bottom:16px;
-  border:2px solid #3b62ba;
+  border:2px solid #2c3e50;
 }
 .info-table th, .info-table td{
-  background:#4a73cf;
-  color:white;
+  background:#1f2937;
+  color:#ffffff;
   font-size:18px;
   font-weight:600;
   text-align:center;
   padding:10px 8px;
-  border:1px solid #3b62ba;
+  border:1px solid #374151;
   width:50%;
   white-space:nowrap;
 }
 .info-table th{
-  background:#3b62ba;
+  background:#111827;
 }
 .clickable-user {
   cursor: pointer;
@@ -72,14 +73,14 @@ header h1{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:6px;
-  background:#3b62ba;
-  border:2px solid #3b62ba;
+  background:#2c3e50;
+  border:2px solid #2c3e50;
   margin-top:24px;
   margin-bottom:12px;
 }
 .menu-btn{
-  background:#4a73cf;
-  color:white;
+  background:#1f2937;
+  color:#ffffff;
   border:0;
   aspect-ratio:1.3 / 1;
   font-size:20px;
@@ -87,10 +88,10 @@ header h1{
   display:flex;
   align-items:center;
   justify-content:center;
-  border:1px solid #3b62ba;
+  border:1px solid #374151;
 }
 .menu-btn:active{
-  background:#3b62ba;
+  background:#374151;
 }
 
 .request-area {
@@ -102,34 +103,34 @@ header h1{
 }
 .request-main-btn {
   flex: 1;
-  background: #3b62ba;
+  background: #2563eb;
   color: #fff;
   border: none;
   padding: 14px;
   font-size: 18px;
   font-weight: bold;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
 .bell-btn {
   position: relative;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #4a73cf;
+  background: #374151;
   color: white;
   border: none;
   font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
   flex-shrink: 0;
 }
 .bell-icon {
   width: 26px;
   height: 26px;
-  stroke: #000;
+  stroke: #ffffff;
   stroke-width: 2.2;
   fill: none;
   stroke-linecap: round;
@@ -149,7 +150,7 @@ header h1{
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #fff;
+  border: 2px solid #121212;
 }
 
 .top-nav{
@@ -160,7 +161,7 @@ header h1{
   gap:8px;
 }
 .back-btn{
-  background:#6b7280;
+  background:#4b5563;
   color:white;
   border:none;
   padding:8px 14px;
@@ -172,29 +173,29 @@ header h1{
 .blue-table{
   width:100%;
   border-collapse:collapse;
-  border:2px solid #3b62ba;
+  border:2px solid #374151;
   text-align:center;
 }
 .blue-table th{
-  background:#4a73cf;
+  background:#1f2937;
   color:white;
   padding:10px 4px;
   font-size:15px;
-  border:1px solid #3b62ba;
+  border:1px solid #374151;
   font-weight:600;
   white-space:nowrap;
 }
 .blue-table td{
   padding:8px 4px;
-  border:1px solid #c8d4f0;
+  border:1px solid #374151;
   font-size:15px;
   white-space:nowrap;
 }
 .blue-table tr:nth-child(even) td{
-  background:#f0f4fc;
+  background:#181818;
 }
 .blue-table tr:nth-child(odd) td{
-  background:#e1e9f8;
+  background:#222222;
 }
 
 .stock-control{
@@ -208,6 +209,7 @@ header h1{
   font-size:16px;
   min-width:24px;
   text-align:center;
+  color:#fff;
 }
 
 .btn-adjust{
@@ -224,19 +226,19 @@ header h1{
   margin:0;
 }
 .btn-minus{
-  background-color:#fecdd3;
-  color:#111827;
+  background-color:#991b1b;
+  color:#ffffff;
 }
 .btn-plus{
-  background-color:#bbf7d0;
-  color:#111827;
+  background-color:#166534;
+  color:#ffffff;
   font-weight:bold;
 }
 
 .login-overlay, .modal-overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.5);
+  background:rgba(0,0,0,0.7);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -248,10 +250,12 @@ header h1{
   max-height: 85vh;
   display: flex;
   flex-direction: column;
-  background:white;
+  background:#1e1e1e;
+  border:1px solid #333;
   border-radius:12px;
   padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  box-shadow:0 10px 25px rgba(0,0,0,0.8);
+  color:#fff;
 }
 .login-box h2, .modal-box h2{
   margin:0 0 14px;
@@ -261,14 +265,16 @@ header h1{
 .login-box select{
   width:100%;
   padding:10px;
-  border:1px solid #ccc;
+  border:1px solid #444;
+  background:#2d2d2d;
+  color:#fff;
   margin-bottom:14px;
   font-size:15px;
 }
 .login-box button, .modal-box .confirm-btn{
   width:100%;
   padding:10px;
-  background:#4a73cf;
+  background:#2563eb;
   color:white;
   border:none;
   font-size:16px;
@@ -287,7 +293,7 @@ header h1{
   display: flex;
   align-items: center;
   padding: 8px 4px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #333;
   font-size: 16px;
 }
 
@@ -297,11 +303,11 @@ header h1{
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #000;
+  border: 2px solid #888;
   border-radius: 4px;
   margin-right: 10px;
   cursor: pointer;
-  background: #fff;
+  background: #2d2d2d;
   outline: none;
   position: relative;
   flex-shrink: 0;
@@ -309,8 +315,8 @@ header h1{
 }
 
 .todo-item input[type="checkbox"]:checked {
-  border-color: #000;
-  background-color: #000;
+  border-color: #2563eb;
+  background-color: #2563eb;
 }
 
 .todo-item input[type="checkbox"]:checked::after {
@@ -327,12 +333,12 @@ header h1{
 
 .todo-item.checked span {
   text-decoration: line-through;
-  color: #888;
+  color: #666;
 }
 
 .card{
-  background:#f9fafb;
-  border:1px solid #e5e7eb;
+  background:#1e1e1e;
+  border:1px solid #333;
   border-radius:10px;
   padding:14px;
   margin-top:12px;
@@ -347,12 +353,14 @@ label{
   font-weight:700;
   font-size:14px;
   margin-bottom:4px;
+  color:#ccc;
 }
 input, select{
   width:100%;
   padding:8px 10px;
-  border:1px solid #d1d5db;
-  background:#fff;
+  border:1px solid #444;
+  background:#2d2d2d;
+  color:#fff;
   font-size:15px;
 }
 .category-input-group{
@@ -365,7 +373,7 @@ input, select{
 }
 
 .primary-btn{
-  background:#4a73cf;
+  background:#2563eb;
   color:#fff;
   border:0;
   padding:12px 16px;
@@ -376,23 +384,11 @@ input, select{
 }
 
 .status-tag{font-weight:800;padding:2px 6px;border-radius:4px;display:inline-block;font-size:14px;white-space:nowrap}
-.status-sufficient{color:#16a34a}
-.status-warning{color:#ffe600; text-shadow: 0px 0px 1px #888;}
-.status-lacking{color:#dc2626}
+.status-sufficient{color:#4ade80}
+.status-warning{color:#facc15}
+.status-lacking{color:#f87171}
 
 .hidden{display:none!important}
-.header-actions{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-top:10px;
-}
-.small-btn{
-  font-size:13px;
-  padding:5px 10px;
-  background:#e5e7eb;
-  border:1px solid #ccc;
-}
 
 .mgmt-table{
   width:100%;
@@ -400,14 +396,14 @@ input, select{
   margin-top:8px;
 }
 .mgmt-table th, .mgmt-table td{
-  border:1px solid #e5e7eb;
+  border:1px solid #333;
   padding:6px 4px;
   text-align:center;
   font-size:14px;
   white-space:nowrap;
 }
 .mgmt-table th{
-  background:#f3f4f6;
+  background:#2a2a2a;
 }
 .action-btn{
   padding:4px 8px;
@@ -416,13 +412,13 @@ input, select{
   border-radius:4px;
   margin:0 1px;
 }
-.edit-btn{background:#eab308; color:white;}
-.del-btn{background:#ef4444; color:white;}
+.edit-btn{background:#ca8a04; color:white;}
+.del-btn{background:#dc2626; color:white;}
 
 .toggle-btn {
   width: 100%;
   text-align: left;
-  background: #4a73cf;
+  background: #2563eb;
   color: white;
   padding: 10px 12px;
   font-size: 16px;
@@ -452,21 +448,21 @@ input, select{
 <div id="requestModal" class="modal-overlay hidden">
   <div class="modal-box">
     <h2>요청할 재료 선택 (객관식)</h2>
-    <p style="font-size:13px; color:#666; text-align:center; margin-top:-8px; margin-bottom:10px;">
+    <p style="font-size:13px; color:#aaa; text-align:center; margin-top:-8px; margin-bottom:10px;">
       요청할 재료를 목록에서 선택하세요.
     </p>
     <ul id="reqChoiceList" class="todo-list"></ul>
     <div style="display:flex; gap:6px; margin-top:14px;">
-      <button type="button" class="confirm-btn" style="background:#6b7280; flex:1;" onclick="closeRequestModal()">취소</button>
-      <button type="button" class="confirm-btn" style="flex:1;" onclick="shareDataWithRequests()">선택 재료 공유하기</button>
+      <button type="button" class="confirm-btn" style="background:#4b5563; flex:1;" onclick="closeRequestModal()">취소</button>
+      <button type="button" class="confirm-btn" style="flex:1;" onclick="shareDataWithRequests()">요청 완료</button>
     </div>
   </div>
 </div>
 
 <div id="noticeModal" class="modal-overlay hidden">
   <div class="modal-box">
-    <h2 style="color:#dc2626; margin-bottom:8px;">⚠️ 사야 할 재료 요청 알림</h2>
-    <p style="font-size:13px; color:#666; text-align:center; margin-top:0;">구매/확인한 항목은 체크박스를 선택하세요.</p>
+    <h2 style="color:#f87171; margin-bottom:8px;">⚠️ 사야 할 재료 요청 알림</h2>
+    <p style="font-size:13px; color:#aaa; text-align:center; margin-top:0;">구매/확인한 항목은 체크박스를 선택하세요.</p>
     <ul id="noticeTodoList" class="todo-list"></ul>
     <button type="button" class="confirm-btn" onclick="closeNoticeModal()">확인</button>
   </div>
@@ -474,9 +470,6 @@ input, select{
 
 <header>
   <h1 id="pageTitle">계근상 재고관리</h1>
-  <div id="headerActions" class="header-actions hidden">
-    <button class="small-btn" onclick="shareData()">공유하기</button>
-  </div>
 </header>
 
 <div class="container">
@@ -496,7 +489,7 @@ input, select{
     <div class="menu-grid">
       <button class="menu-btn" onclick="navTo('survey')">재고조사</button>
       <button class="menu-btn" onclick="navTo('status')">재고현황</button>
-      <button class="menu-btn" onclick="navTo('items')">품목등록</button>
+      <button class="menu-btn" onclick="navTo('items')">품목/재료 등록</button>
       <button class="menu-btn" onclick="navTo('manage')">품목/사용자 관리</button>
     </div>
 
@@ -553,6 +546,7 @@ input, select{
       <button class="back-btn" onclick="navTo('home')">← 메인으로</button>
     </div>
 
+    <!-- 1. 품목 등록 -->
     <div class="card">
       <h3 style="margin-top:0; font-size:18px;">신규 품목 등록</h3>
       <form id="itemForm">
@@ -586,6 +580,19 @@ input, select{
       </form>
     </div>
 
+    <!-- 2. 신규 사용자 등록 (이동된 위치) -->
+    <div class="card" style="margin-top:16px;">
+      <h3 style="margin-top:0; font-size:18px;">신규 사용자 등록</h3>
+      <form id="userForm">
+        <div>
+          <label>사용자 이름</label>
+          <input id="newUserName" placeholder="등록할 사용자 이름 입력" required autocomplete="off">
+        </div>
+        <button class="primary-btn" type="submit">사용자 등록하기</button>
+      </form>
+    </div>
+
+    <!-- 3. 신규 요청 재료 등록 -->
     <div class="card" style="margin-top:16px;">
       <h3 style="margin-top:0; font-size:18px;">신규 요청 재료 등록 (객관식용)</h3>
       <form id="ingredientForm">
@@ -593,7 +600,7 @@ input, select{
           <label>재료 명칭</label>
           <input id="newIngredientName" placeholder="재료 이름을 입력하세요 (예: 대파, 마늘 등)" required autocomplete="off">
         </div>
-        <button class="primary-btn" type="submit" style="background:#3b62ba;">재료 등록하기</button>
+        <button class="primary-btn" type="submit" style="background:#2563eb;">재료 등록하기</button>
       </form>
     </div>
   </section>
@@ -646,17 +653,6 @@ input, select{
     </div>
 
     <div class="card">
-      <h3 style="margin-top:0; font-size:18px;">신규 사용자 등록</h3>
-      <form id="userForm">
-        <div>
-          <label>사용자 이름</label>
-          <input id="newUserName" placeholder="등록할 사용자 이름 입력" required autocomplete="off">
-        </div>
-        <button class="primary-btn" type="submit">사용자 등록하기</button>
-      </form>
-    </div>
-
-    <div class="card">
       <button class="toggle-btn" onclick="toggleSection('userMgmtToggle', 'userMgmtArrow')">
         <span>사용자 관리</span>
         <span id="userMgmtArrow">▼</span>
@@ -678,12 +674,12 @@ input, select{
 </div>
 
 <script>
-const EMBEDDED_SHARED_SNAPSHOT = null;
 const LOCAL_KEY="restaurant_inventory_v9";
 const USER_KEY="restaurant_inventory_user_v9";
 const USERS_LIST_KEY="restaurant_inventory_users_list_v9";
 const REQUEST_ITEMS_KEY="restaurant_inventory_request_items_v9";
 const REGISTERED_INGREDIENTS_KEY="restaurant_inventory_registered_ingredients_v9";
+const SEEN_REQUEST_TIMESTAMP_KEY="restaurant_inventory_seen_request_ts_v9";
 
 window.categories=[
   {id:"cat_1",name:"계근상"},
@@ -698,6 +694,7 @@ let currentUser="";
 let currentTab="home";
 
 window.requestList = [];
+window.requestListUpdatedAt = 0;
 
 function localDate(){
   const d=new Date();
@@ -750,7 +747,10 @@ function saveLocal(){
   window.data.categories = window.categories;
   localStorage.setItem(LOCAL_KEY,JSON.stringify(window.data));
   localStorage.setItem(USERS_LIST_KEY, JSON.stringify(window.userList));
-  localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(window.requestList));
+  localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify({
+    list: window.requestList,
+    updatedAt: window.requestListUpdatedAt
+  }));
   localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(window.registeredIngredients));
 
   if(window.saveToFirestore){
@@ -770,8 +770,13 @@ function loadLocal(){
   }catch(e){}
 
   try{
-    const rList=JSON.parse(localStorage.getItem(REQUEST_ITEMS_KEY));
-    if(Array.isArray(rList)) window.requestList = rList;
+    const reqObj=JSON.parse(localStorage.getItem(REQUEST_ITEMS_KEY));
+    if(reqObj && Array.isArray(reqObj.list)){
+      window.requestList = reqObj.list;
+      window.requestListUpdatedAt = reqObj.updatedAt || 0;
+    } else if(Array.isArray(reqObj)){
+      window.requestList = reqObj;
+    }
   }catch(e){}
 
   try{
@@ -852,13 +857,6 @@ function navTo(tab){
     manage: "품목/사용자 관리"
   };
   document.getElementById("pageTitle").textContent = titles[tab] || "계근상 재고관리";
-
-  const headerActions = document.getElementById("headerActions");
-  if(tab === 'survey'){
-    headerActions.classList.remove("hidden");
-  } else {
-    headerActions.classList.add("hidden");
-  }
 
   const infoTable = document.getElementById("infoTable");
   const displayUser = document.getElementById("displayUser");
@@ -1010,7 +1008,7 @@ function renderSurvey(){
       </td>
       <td><span class="status-tag ${statusClass}">${statusTag}</span></td>
     </tr>
-  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#fff;">등록된 품목이 없습니다.</td></tr>';
+  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#1e1e1e;">등록된 품목이 없습니다.</td></tr>';
 }
 
 function renderStatus(){
@@ -1034,10 +1032,10 @@ function renderStatus(){
     return `
     <tr>
       <td><b>${esc(i.name)}</b></td>
-      <td style="font-weight:bold;font-size:16px;">${i.stock}</td>
+      <td style="font-weight:bold;font-size:16px;color:#fff;">${i.stock}</td>
       <td><span class="status-tag ${statusClass}">${statusTag}</span></td>
     </tr>
-  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#fff;">등록된 품목이 없습니다.</td></tr>';
+  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#1e1e1e;">등록된 품목이 없습니다.</td></tr>';
 }
 
 function changeStock(id,delta){
@@ -1321,13 +1319,13 @@ function closeRequestModal(){
 function renderReqChoiceList(){
   const ul = document.getElementById("reqChoiceList");
   if(window.registeredIngredients.length === 0){
-    ul.innerHTML = '<li style="text-align:center; color:#999; padding:10px;">등록된 재료가 없습니다.<br>품목/재료 등록 탭에서 먼저 재료를 등록하세요.</li>';
+    ul.innerHTML = '<li style="text-align:center; color:#888; padding:10px;">등록된 재료가 없습니다.<br>품목/재료 등록 탭에서 먼저 재료를 등록하세요.</li>';
     return;
   }
   ul.innerHTML = window.registeredIngredients.map(ing => `
     <li class="todo-item">
       <input type="checkbox" class="req-choice-cb" value="${esc(ing.name)}" id="ing_cb_${ing.id}">
-      <label for="ing_cb_${ing.id}" style="margin:0; font-weight:normal; cursor:pointer; flex:1;">${esc(ing.name)}</label>
+      <label for="ing_cb_${ing.id}" style="margin:0; font-weight:normal; cursor:pointer; flex:1; color:#fff;">${esc(ing.name)}</label>
     </li>
   `).join("");
 }
@@ -1335,7 +1333,7 @@ function renderReqChoiceList(){
 function shareDataWithRequests(){
   const checkboxes = document.querySelectorAll(".req-choice-cb:checked");
   if(checkboxes.length === 0){
-    alert("공유할 재료를 1개 이상 선택해주세요.");
+    alert("요청할 재료를 1개 이상 선택해주세요.");
     return;
   }
   
@@ -1345,6 +1343,8 @@ function shareDataWithRequests(){
     checked: false
   }));
 
+  window.requestListUpdatedAt = Date.now();
+  
   saveLocal();
   closeRequestModal();
   updateBellBadge();
@@ -1364,6 +1364,9 @@ function closeNoticeModal(){
   if(allChecked){
     window.requestList = [];
   }
+  if(window.requestListUpdatedAt > 0){
+    localStorage.setItem(SEEN_REQUEST_TIMESTAMP_KEY, String(window.requestListUpdatedAt));
+  }
   saveLocal();
   updateBellBadge();
   document.getElementById("noticeModal").classList.add("hidden");
@@ -1381,7 +1384,7 @@ function toggleNoticeCheck(id){
 function renderNoticeList(){
   const ul = document.getElementById("noticeTodoList");
   if(window.requestList.length === 0){
-    ul.innerHTML = '<li style="text-align:center; color:#999; padding:10px;">재료 요청 내역이 없습니다.</li>';
+    ul.innerHTML = '<li style="text-align:center; color:#888; padding:10px;">재료 요청 내역이 없습니다.</li>';
     return;
   }
   ul.innerHTML = window.requestList.map(item => `
@@ -1401,53 +1404,12 @@ function updateBellBadge(){
   }
 }
 
-async function shareData(){
-  try{
-    window.normalizeData();
-    const payload = {
-      data: window.data,
-      userList: window.userList,
-      requestList: window.requestList,
-      registeredIngredients: window.registeredIngredients,
-      categories: window.categories,
-      isSharedSnapshot: true
-    };
-
-    const snapshot=JSON.stringify(payload)
-      .replace(/\\/g,"\\\\")
-      .replace(/`/g,"\\`")
-      .replace(/<\/script/gi,"<\\/script");
-
-    let shareHTML=document.documentElement.outerHTML;
-    
-    shareHTML = shareHTML.replace(/let currentUser=".*?";/, 'let currentUser="";');
-    
-    shareHTML=shareHTML.replace(
-      /const EMBEDDED_SHARED_SNAPSHOT = .*?;/s,
-      `const EMBEDDED_SHARED_SNAPSHOT = JSON.parse(\`${snapshot}\`);`
-    );
-
-    const blob=new Blob(["<!DOCTYPE html>\n"+shareHTML],{type:"text/html;charset=utf-8"});
-    const file=new File([blob],"계근상_재고관리.html",{type:"text/html"});
-
-    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({
-        title:"재고관리 Data",
-        files:[file]
-      });
-      return;
+function checkAutoNoticeModal(){
+  if(window.requestList.length > 0 && window.requestListUpdatedAt > 0){
+    const seenTs = Number(localStorage.getItem(SEEN_REQUEST_TIMESTAMP_KEY) || 0);
+    if(window.requestListUpdatedAt > seenTs){
+      openBellNotice();
     }
-
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url;
-    a.download="계근상_재고관리.html";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-  }catch(err){
-    if(err.name!=="AbortError") return;
   }
 }
 
@@ -1458,43 +1420,13 @@ window.renderAll = function(){
   renderItemMgmt();
   renderIngMgmt();
   updateBellBadge();
+  checkAutoNoticeModal();
   
   if(currentTab === 'survey') renderSurvey();
   if(currentTab === 'status') renderStatus();
 }
 
 loadLocal();
-
-if(EMBEDDED_SHARED_SNAPSHOT){
-  try{
-    if(EMBEDDED_SHARED_SNAPSHOT.data){
-      window.data = EMBEDDED_SHARED_SNAPSHOT.data;
-    } else {
-      window.data = EMBEDDED_SHARED_SNAPSHOT;
-    }
-    if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.userList)){
-      window.userList = EMBEDDED_SHARED_SNAPSHOT.userList;
-    }
-    if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.requestList)){
-      window.requestList = EMBEDDED_SHARED_SNAPSHOT.requestList;
-    }
-    if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.registeredIngredients)){
-      window.registeredIngredients = EMBEDDED_SHARED_SNAPSHOT.registeredIngredients;
-    }
-    if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.categories)){
-      window.categories = EMBEDDED_SHARED_SNAPSHOT.categories;
-    }
-    window.normalizeData();
-    saveLocal();
-
-    if(EMBEDDED_SHARED_SNAPSHOT.isSharedSnapshot && window.requestList.length > 0){
-      setTimeout(() => {
-        openBellNotice();
-      }, 300);
-    }
-  }catch(e){}
-}
-
 navTo('home');
 window.renderAll();
 </script>
@@ -1522,6 +1454,7 @@ window.renderAll();
       data: window.data,
       userList: window.userList,
       requestList: window.requestList,
+      requestListUpdatedAt: window.requestListUpdatedAt || 0,
       registeredIngredients: window.registeredIngredients,
       categories: window.categories,
       updatedAt: new Date().toISOString()
@@ -1534,6 +1467,7 @@ window.renderAll();
       if (serverData.data) window.data = serverData.data;
       if (serverData.userList) window.userList = serverData.userList;
       if (serverData.requestList) window.requestList = serverData.requestList;
+      if (serverData.requestListUpdatedAt) window.requestListUpdatedAt = serverData.requestListUpdatedAt;
       if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
       if (serverData.categories) window.categories = serverData.categories;
       
