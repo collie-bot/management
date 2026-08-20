@@ -753,15 +753,8 @@ function saveLocal(){
   localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(requestList));
   localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(registeredIngredients));
 
-  if(window.db && window.doc && window.setDoc){
-    const mainDocRef = window.doc(window.db, "inventory_app", "main_data");
-    window.setDoc(mainDocRef, {
-      data: data,
-      userList: userList,
-      requestList: requestList,
-      registeredIngredients: registeredIngredients,
-      updatedAt: new Date().toISOString()
-    }).catch(err => console.error("Firebase 저장 실패:", err));
+  if(window.saveToFirestore){
+    window.saveToFirestore();
   }
 }
 
@@ -1416,6 +1409,7 @@ async function shareData(){
       userList: userList,
       requestList: requestList,
       registeredIngredients: registeredIngredients,
+      categories: categories,
       isSharedSnapshot: true
     };
 
@@ -1487,6 +1481,9 @@ if(EMBEDDED_SHARED_SNAPSHOT){
     if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.registeredIngredients)){
       registeredIngredients = EMBEDDED_SHARED_SNAPSHOT.registeredIngredients;
     }
+    if(Array.isArray(EMBEDDED_SHARED_SNAPSHOT.categories)){
+      categories = EMBEDDED_SHARED_SNAPSHOT.categories;
+    }
     normalizeData();
     saveLocal();
 
@@ -1519,11 +1516,18 @@ renderAll();
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  window.db = db;
-  window.doc = doc;
-  window.setDoc = setDoc;
-
   const mainDocRef = doc(db, "inventory_app", "main_data");
+
+  window.saveToFirestore = function() {
+    setDoc(mainDocRef, {
+      data: window.data,
+      userList: window.userList,
+      requestList: window.requestList,
+      registeredIngredients: window.registeredIngredients,
+      categories: window.categories,
+      updatedAt: new Date().toISOString()
+    }).catch(err => console.error("Firebase 저장 실패:", err));
+  };
   
   onSnapshot(mainDocRef, (docSnap) => {
     if (docSnap.exists()) {
@@ -1532,6 +1536,7 @@ renderAll();
       if (serverData.userList) window.userList = serverData.userList;
       if (serverData.requestList) window.requestList = serverData.requestList;
       if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
+      if (serverData.categories) window.categories = serverData.categories;
       
       window.normalizeData();
       window.renderAll();
