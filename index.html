@@ -24,11 +24,10 @@ button,input,select{
 button{cursor:pointer}
 
 header{
-  background:#1e1e1e;
-  color:#ffffff;
+  background:#121212;
+  color:#fff;
   padding:16px 12px 8px;
   text-align:center;
-  border-bottom:1px solid #333;
 }
 header h1{
   margin:0;
@@ -48,21 +47,21 @@ header h1{
   border-collapse:collapse;
   margin-top:12px;
   margin-bottom:16px;
-  border:2px solid #2c3e50;
+  border:2px solid #3b62ba;
 }
 .info-table th, .info-table td{
-  background:#1f2937;
-  color:#ffffff;
+  background:#4a73cf;
+  color:white;
   font-size:18px;
   font-weight:600;
   text-align:center;
   padding:10px 8px;
-  border:1px solid #374151;
+  border:1px solid #3b62ba;
   width:50%;
   white-space:nowrap;
 }
 .info-table th{
-  background:#111827;
+  background:#3b62ba;
 }
 .clickable-user {
   cursor: pointer;
@@ -73,14 +72,14 @@ header h1{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:6px;
-  background:#2c3e50;
-  border:2px solid #2c3e50;
+  background:#3b62ba;
+  border:2px solid #3b62ba;
   margin-top:24px;
   margin-bottom:12px;
 }
 .menu-btn{
-  background:#1f2937;
-  color:#ffffff;
+  background:#4a73cf;
+  color:white;
   border:0;
   aspect-ratio:1.3 / 1;
   font-size:20px;
@@ -88,10 +87,10 @@ header h1{
   display:flex;
   align-items:center;
   justify-content:center;
-  border:1px solid #374151;
+  border:1px solid #3b62ba;
 }
 .menu-btn:active{
-  background:#374151;
+  background:#3b62ba;
 }
 
 .request-area {
@@ -103,34 +102,34 @@ header h1{
 }
 .request-main-btn {
   flex: 1;
-  background: #2563eb;
+  background: #3b62ba;
   color: #fff;
   border: none;
   padding: 14px;
   font-size: 18px;
   font-weight: bold;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 .bell-btn {
   position: relative;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #374151;
+  background: #4a73cf;
   color: white;
   border: none;
   font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   flex-shrink: 0;
 }
 .bell-icon {
   width: 26px;
   height: 26px;
-  stroke: #ffffff;
+  stroke: #fff;
   stroke-width: 2.2;
   fill: none;
   stroke-linecap: round;
@@ -150,7 +149,7 @@ header h1{
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #121212;
+  border: 2px solid #fff;
 }
 
 .top-nav{
@@ -161,7 +160,7 @@ header h1{
   gap:8px;
 }
 .back-btn{
-  background:#4b5563;
+  background:#6b7280;
   color:white;
   border:none;
   padding:8px 14px;
@@ -173,29 +172,30 @@ header h1{
 .blue-table{
   width:100%;
   border-collapse:collapse;
-  border:2px solid #374151;
+  border:2px solid #3b62ba;
   text-align:center;
 }
 .blue-table th{
-  background:#1f2937;
+  background:#4a73cf;
   color:white;
   padding:10px 4px;
   font-size:15px;
-  border:1px solid #374151;
+  border:1px solid #3b62ba;
   font-weight:600;
   white-space:nowrap;
 }
 .blue-table td{
   padding:8px 4px;
-  border:1px solid #374151;
+  border:1px solid #c8d4f0;
   font-size:15px;
   white-space:nowrap;
+  color: #111;
 }
 .blue-table tr:nth-child(even) td{
-  background:#181818;
+  background:#f0f4fc;
 }
 .blue-table tr:nth-child(odd) td{
-  background:#222222;
+  background:#e1e9f8;
 }
 
 .stock-control{
@@ -209,7 +209,6 @@ header h1{
   font-size:16px;
   min-width:24px;
   text-align:center;
-  color:#fff;
 }
 
 .btn-adjust{
@@ -226,12 +225,12 @@ header h1{
   margin:0;
 }
 .btn-minus{
-  background-color:#991b1b;
-  color:#ffffff;
+  background-color:#fecdd3;
+  color:#111827;
 }
 .btn-plus{
-  background-color:#166534;
-  color:#ffffff;
+  background-color:#bbf7d0;
+  color:#111827;
   font-weight:bold;
 }
 
@@ -251,11 +250,11 @@ header h1{
   display: flex;
   flex-direction: column;
   background:#1e1e1e;
+  color:#e0e0e0;
   border:1px solid #333;
   border-radius:12px;
   padding:20px;
   box-shadow:0 10px 25px rgba(0,0,0,0.8);
-  color:#fff;
 }
 .login-box h2, .modal-box h2{
   margin:0 0 14px;
@@ -266,7 +265,7 @@ header h1{
   width:100%;
   padding:10px;
   border:1px solid #444;
-  background:#2d2d2d;
+  background:#2b2b2b;
   color:#fff;
   margin-bottom:14px;
   font-size:15px;
@@ -274,7 +273,7 @@ header h1{
 .login-box button, .modal-box .confirm-btn{
   width:100%;
   padding:10px;
-  background:#2563eb;
+  background:#4a73cf;
   color:white;
   border:none;
   font-size:16px;
@@ -295,6 +294,7 @@ header h1{
   padding: 8px 4px;
   border-bottom: 1px solid #333;
   font-size: 16px;
+  color:#e0e0e0;
 }
 
 .todo-item input[type="checkbox"] {
@@ -303,11 +303,11 @@ header h1{
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 2px solid #888;
+  border: 2px solid #666;
   border-radius: 4px;
   margin-right: 10px;
   cursor: pointer;
-  background: #2d2d2d;
+  background: #2b2b2b;
   outline: none;
   position: relative;
   flex-shrink: 0;
@@ -315,8 +315,8 @@ header h1{
 }
 
 .todo-item input[type="checkbox"]:checked {
-  border-color: #2563eb;
-  background-color: #2563eb;
+  border-color: #4a73cf;
+  background-color: #4a73cf;
 }
 
 .todo-item input[type="checkbox"]:checked::after {
@@ -333,7 +333,7 @@ header h1{
 
 .todo-item.checked span {
   text-decoration: line-through;
-  color: #666;
+  color: #888;
 }
 
 .card{
@@ -342,6 +342,7 @@ header h1{
   border-radius:10px;
   padding:14px;
   margin-top:12px;
+  color:#fff;
 }
 .grid{
   display:grid;
@@ -353,13 +354,13 @@ label{
   font-weight:700;
   font-size:14px;
   margin-bottom:4px;
-  color:#ccc;
+  color:#e0e0e0;
 }
 input, select{
   width:100%;
   padding:8px 10px;
   border:1px solid #444;
-  background:#2d2d2d;
+  background:#2b2b2b;
   color:#fff;
   font-size:15px;
 }
@@ -373,7 +374,7 @@ input, select{
 }
 
 .primary-btn{
-  background:#2563eb;
+  background:#4a73cf;
   color:#fff;
   border:0;
   padding:12px 16px;
@@ -384,16 +385,18 @@ input, select{
 }
 
 .status-tag{font-weight:800;padding:2px 6px;border-radius:4px;display:inline-block;font-size:14px;white-space:nowrap}
-.status-sufficient{color:#4ade80}
-.status-warning{color:#facc15}
-.status-lacking{color:#f87171}
+.status-sufficient{color:#16a34a}
+.status-warning{color:#ffe600; text-shadow: 0px 0px 1px #888;}
+.status-lacking{color:#dc2626}
 
 .hidden{display:none!important}
 
+/* 품목/사용자/재료 관리 테이블 어두운 테마 수정 */
 .mgmt-table{
   width:100%;
   border-collapse:collapse;
   margin-top:8px;
+  color:#e0e0e0;
 }
 .mgmt-table th, .mgmt-table td{
   border:1px solid #333;
@@ -401,9 +404,11 @@ input, select{
   text-align:center;
   font-size:14px;
   white-space:nowrap;
+  background:#2b2b2b;
 }
 .mgmt-table th{
-  background:#2a2a2a;
+  background:#383838;
+  color:#fff;
 }
 .action-btn{
   padding:4px 8px;
@@ -412,13 +417,13 @@ input, select{
   border-radius:4px;
   margin:0 1px;
 }
-.edit-btn{background:#ca8a04; color:white;}
-.del-btn{background:#dc2626; color:white;}
+.edit-btn{background:#eab308; color:white;}
+.del-btn{background:#ef4444; color:white;}
 
 .toggle-btn {
   width: 100%;
   text-align: left;
-  background: #2563eb;
+  background: #4a73cf;
   color: white;
   padding: 10px 12px;
   font-size: 16px;
@@ -453,15 +458,15 @@ input, select{
     </p>
     <ul id="reqChoiceList" class="todo-list"></ul>
     <div style="display:flex; gap:6px; margin-top:14px;">
-      <button type="button" class="confirm-btn" style="background:#4b5563; flex:1;" onclick="closeRequestModal()">취소</button>
-      <button type="button" class="confirm-btn" style="flex:1;" onclick="shareDataWithRequests()">요청 완료</button>
+      <button type="button" class="confirm-btn" style="background:#6b7280; flex:1;" onclick="closeRequestModal()">취소</button>
+      <button type="button" class="confirm-btn" style="flex:1;" onclick="shareDataWithRequests()">요청하기</button>
     </div>
   </div>
 </div>
 
 <div id="noticeModal" class="modal-overlay hidden">
   <div class="modal-box">
-    <h2 style="color:#f87171; margin-bottom:8px;">⚠️ 사야 할 재료 요청 알림</h2>
+    <h2 style="color:#ef4444; margin-bottom:8px;">⚠️ 사야 할 재료 요청 알림</h2>
     <p style="font-size:13px; color:#aaa; text-align:center; margin-top:0;">구매/확인한 항목은 체크박스를 선택하세요.</p>
     <ul id="noticeTodoList" class="todo-list"></ul>
     <button type="button" class="confirm-btn" onclick="closeNoticeModal()">확인</button>
@@ -489,7 +494,7 @@ input, select{
     <div class="menu-grid">
       <button class="menu-btn" onclick="navTo('survey')">재고조사</button>
       <button class="menu-btn" onclick="navTo('status')">재고현황</button>
-      <button class="menu-btn" onclick="navTo('items')">품목/재료 등록</button>
+      <button class="menu-btn" onclick="navTo('items')">품목등록</button>
       <button class="menu-btn" onclick="navTo('manage')">품목/사용자 관리</button>
     </div>
 
@@ -500,7 +505,7 @@ input, select{
           <path d="M12 2a4 4 0 0 0-4 4v3.2c0 .9-.3 1.8-.9 2.5L5.6 13.6c-.8 1-.1 2.4 1.2 2.4h10.4c1.3 0 2-1.4 1.2-2.4l-1.5-1.9c-.6-.7-.9-1.6-.9-2.5V6a4 4 0 0 0-4-4z" />
           <path d="M9.5 18a2.5 2.5 0 0 0 5 0" />
         </svg>
-        <span id="bellBadge" class="bell-badge hidden">1</span>
+        <span id="bellBadge" class="bell-badge hidden">!</span>
       </button>
     </div>
   </section>
@@ -546,7 +551,6 @@ input, select{
       <button class="back-btn" onclick="navTo('home')">← 메인으로</button>
     </div>
 
-    <!-- 1. 품목 등록 -->
     <div class="card">
       <h3 style="margin-top:0; font-size:18px;">신규 품목 등록</h3>
       <form id="itemForm">
@@ -580,7 +584,6 @@ input, select{
       </form>
     </div>
 
-    <!-- 2. 신규 사용자 등록 (이동된 위치) -->
     <div class="card" style="margin-top:16px;">
       <h3 style="margin-top:0; font-size:18px;">신규 사용자 등록</h3>
       <form id="userForm">
@@ -592,7 +595,6 @@ input, select{
       </form>
     </div>
 
-    <!-- 3. 신규 요청 재료 등록 -->
     <div class="card" style="margin-top:16px;">
       <h3 style="margin-top:0; font-size:18px;">신규 요청 재료 등록 (객관식용)</h3>
       <form id="ingredientForm">
@@ -600,7 +602,7 @@ input, select{
           <label>재료 명칭</label>
           <input id="newIngredientName" placeholder="재료 이름을 입력하세요 (예: 대파, 마늘 등)" required autocomplete="off">
         </div>
-        <button class="primary-btn" type="submit" style="background:#2563eb;">재료 등록하기</button>
+        <button class="primary-btn" type="submit" style="background:#3b62ba;">재료 등록하기</button>
       </form>
     </div>
   </section>
@@ -679,7 +681,7 @@ const USER_KEY="restaurant_inventory_user_v9";
 const USERS_LIST_KEY="restaurant_inventory_users_list_v9";
 const REQUEST_ITEMS_KEY="restaurant_inventory_request_items_v9";
 const REGISTERED_INGREDIENTS_KEY="restaurant_inventory_registered_ingredients_v9";
-const SEEN_REQUEST_TIMESTAMP_KEY="restaurant_inventory_seen_request_ts_v9";
+const NOTIFICATION_SHOWN_KEY="restaurant_inventory_notification_shown_v9";
 
 window.categories=[
   {id:"cat_1",name:"계근상"},
@@ -694,7 +696,6 @@ let currentUser="";
 let currentTab="home";
 
 window.requestList = [];
-window.requestListUpdatedAt = 0;
 
 function localDate(){
   const d=new Date();
@@ -747,10 +748,7 @@ function saveLocal(){
   window.data.categories = window.categories;
   localStorage.setItem(LOCAL_KEY,JSON.stringify(window.data));
   localStorage.setItem(USERS_LIST_KEY, JSON.stringify(window.userList));
-  localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify({
-    list: window.requestList,
-    updatedAt: window.requestListUpdatedAt
-  }));
+  localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(window.requestList));
   localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(window.registeredIngredients));
 
   if(window.saveToFirestore){
@@ -770,13 +768,8 @@ function loadLocal(){
   }catch(e){}
 
   try{
-    const reqObj=JSON.parse(localStorage.getItem(REQUEST_ITEMS_KEY));
-    if(reqObj && Array.isArray(reqObj.list)){
-      window.requestList = reqObj.list;
-      window.requestListUpdatedAt = reqObj.updatedAt || 0;
-    } else if(Array.isArray(reqObj)){
-      window.requestList = reqObj;
-    }
+    const rList=JSON.parse(localStorage.getItem(REQUEST_ITEMS_KEY));
+    if(Array.isArray(rList)) window.requestList = rList;
   }catch(e){}
 
   try{
@@ -853,7 +846,7 @@ function navTo(tab){
     home: "계근상 재고관리",
     survey: "재고조사",
     status: "재고현황",
-    items: "품목/재료 등록",
+    items: "품목/사용자/재료 등록",
     manage: "품목/사용자 관리"
   };
   document.getElementById("pageTitle").textContent = titles[tab] || "계근상 재고관리";
@@ -940,7 +933,6 @@ function editSelectedCategory(){
   const selectElem = document.getElementById("itemCategorySelect");
   const selectedName = selectElem.value;
   if(!selectedName){
-    alert("수정할 분류를 선택해 주세요.");
     return;
   }
   const newName = prompt("분류 이름을 수정하세요:", selectedName);
@@ -964,7 +956,6 @@ function deleteSelectedCategory(){
   const selectElem = document.getElementById("itemCategorySelect");
   const selectedName = selectElem.value;
   if(!selectedName){
-    alert("삭제할 분류를 선택해 주세요.");
     return;
   }
   if(confirm(`[${selectedName}] 분류를 삭제합니다.`)){
@@ -1008,7 +999,7 @@ function renderSurvey(){
       </td>
       <td><span class="status-tag ${statusClass}">${statusTag}</span></td>
     </tr>
-  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#1e1e1e;">등록된 품목이 없습니다.</td></tr>';
+  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#121212;color:#fff;">등록된 품목이 없습니다.</td></tr>';
 }
 
 function renderStatus(){
@@ -1032,10 +1023,10 @@ function renderStatus(){
     return `
     <tr>
       <td><b>${esc(i.name)}</b></td>
-      <td style="font-weight:bold;font-size:16px;color:#fff;">${i.stock}</td>
+      <td style="font-weight:bold;font-size:16px;">${i.stock}</td>
       <td><span class="status-tag ${statusClass}">${statusTag}</span></td>
     </tr>
-  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#1e1e1e;">등록된 품목이 없습니다.</td></tr>';
+  `}).join(""):'<tr><td colspan="3" style="padding:16px;background:#121212;color:#fff;">등록된 품목이 없습니다.</td></tr>';
 }
 
 function changeStock(id,delta){
@@ -1226,8 +1217,6 @@ document.getElementById("ingredientForm").addEventListener("submit", e => {
   if(!window.registeredIngredients.some(i => i.name === name)){
     window.registeredIngredients.push({ id: uid("ing"), name: name });
     saveLocal();
-  } else {
-    alert("이미 등록되어 있는 재료입니다.");
   }
   ingInput.value = "";
   ingInput.focus();
@@ -1245,6 +1234,13 @@ document.getElementById("newItemName").addEventListener("keydown", function(e){
   if(e.key === "Enter"){
     e.preventDefault();
     document.getElementById("itemMinStock").focus();
+  }
+});
+
+document.getElementById("itemMinStock").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    document.getElementById("itemForm").dispatchEvent(new Event('submit'));
   }
 });
 
@@ -1319,13 +1315,13 @@ function closeRequestModal(){
 function renderReqChoiceList(){
   const ul = document.getElementById("reqChoiceList");
   if(window.registeredIngredients.length === 0){
-    ul.innerHTML = '<li style="text-align:center; color:#888; padding:10px;">등록된 재료가 없습니다.<br>품목/재료 등록 탭에서 먼저 재료를 등록하세요.</li>';
+    ul.innerHTML = '<li style="text-align:center; color:#888; padding:10px;">등록된 재료가 없습니다.<br>품목/사용자/재료 등록 탭에서 먼저 재료를 등록하세요.</li>';
     return;
   }
   ul.innerHTML = window.registeredIngredients.map(ing => `
     <li class="todo-item">
       <input type="checkbox" class="req-choice-cb" value="${esc(ing.name)}" id="ing_cb_${ing.id}">
-      <label for="ing_cb_${ing.id}" style="margin:0; font-weight:normal; cursor:pointer; flex:1; color:#fff;">${esc(ing.name)}</label>
+      <label for="ing_cb_${ing.id}" style="margin:0; font-weight:normal; cursor:pointer; flex:1;">${esc(ing.name)}</label>
     </li>
   `).join("");
 }
@@ -1333,7 +1329,6 @@ function renderReqChoiceList(){
 function shareDataWithRequests(){
   const checkboxes = document.querySelectorAll(".req-choice-cb:checked");
   if(checkboxes.length === 0){
-    alert("요청할 재료를 1개 이상 선택해주세요.");
     return;
   }
   
@@ -1343,8 +1338,9 @@ function shareDataWithRequests(){
     checked: false
   }));
 
-  window.requestListUpdatedAt = Date.now();
-  
+  window.lastRequestBatchId = uid("batch");
+  localStorage.removeItem(NOTIFICATION_SHOWN_KEY);
+
   saveLocal();
   closeRequestModal();
   updateBellBadge();
@@ -1352,7 +1348,6 @@ function shareDataWithRequests(){
 
 function openBellNotice(){
   if(window.requestList.length === 0){
-    alert("현재 남아있는 재료 요청 알림이 없습니다.");
     return;
   }
   renderNoticeList();
@@ -1363,9 +1358,6 @@ function closeNoticeModal(){
   const allChecked = window.requestList.length > 0 && window.requestList.every(i => i.checked);
   if(allChecked){
     window.requestList = [];
-  }
-  if(window.requestListUpdatedAt > 0){
-    localStorage.setItem(SEEN_REQUEST_TIMESTAMP_KEY, String(window.requestListUpdatedAt));
   }
   saveLocal();
   updateBellBadge();
@@ -1404,10 +1396,11 @@ function updateBellBadge(){
   }
 }
 
-function checkAutoNoticeModal(){
-  if(window.requestList.length > 0 && window.requestListUpdatedAt > 0){
-    const seenTs = Number(localStorage.getItem(SEEN_REQUEST_TIMESTAMP_KEY) || 0);
-    if(window.requestListUpdatedAt > seenTs){
+function checkAndShowNotification(){
+  if(window.requestList && window.requestList.length > 0 && window.lastRequestBatchId){
+    const shownBatchId = localStorage.getItem(NOTIFICATION_SHOWN_KEY);
+    if(shownBatchId !== window.lastRequestBatchId){
+      localStorage.setItem(NOTIFICATION_SHOWN_KEY, window.lastRequestBatchId);
       openBellNotice();
     }
   }
@@ -1420,13 +1413,14 @@ window.renderAll = function(){
   renderItemMgmt();
   renderIngMgmt();
   updateBellBadge();
-  checkAutoNoticeModal();
+  checkAndShowNotification();
   
   if(currentTab === 'survey') renderSurvey();
   if(currentTab === 'status') renderStatus();
 }
 
 loadLocal();
+
 navTo('home');
 window.renderAll();
 </script>
@@ -1454,9 +1448,9 @@ window.renderAll();
       data: window.data,
       userList: window.userList,
       requestList: window.requestList,
-      requestListUpdatedAt: window.requestListUpdatedAt || 0,
       registeredIngredients: window.registeredIngredients,
       categories: window.categories,
+      lastRequestBatchId: window.lastRequestBatchId || null,
       updatedAt: new Date().toISOString()
     }).catch(err => console.error("Firebase 저장 실패:", err));
   };
@@ -1467,9 +1461,9 @@ window.renderAll();
       if (serverData.data) window.data = serverData.data;
       if (serverData.userList) window.userList = serverData.userList;
       if (serverData.requestList) window.requestList = serverData.requestList;
-      if (serverData.requestListUpdatedAt) window.requestListUpdatedAt = serverData.requestListUpdatedAt;
       if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
       if (serverData.categories) window.categories = serverData.categories;
+      if (serverData.lastRequestBatchId) window.lastRequestBatchId = serverData.lastRequestBatchId;
       
       if(window.normalizeData) window.normalizeData();
       if(window.renderAll) window.renderAll();
