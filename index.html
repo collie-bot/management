@@ -169,6 +169,7 @@ header h1{
   white-space:nowrap;
 }
 
+/* 어두운 테마 스타일 적용 */
 .blue-table{
   width:100%;
   border-collapse:collapse;
@@ -176,26 +177,26 @@ header h1{
   text-align:center;
 }
 .blue-table th{
-  background:#4a73cf;
+  background:#3b62ba;
   color:white;
   padding:10px 4px;
   font-size:15px;
-  border:1px solid #3b62ba;
+  border:1px solid #333;
   font-weight:600;
   white-space:nowrap;
 }
 .blue-table td{
   padding:8px 4px;
-  border:1px solid #c8d4f0;
+  border:1px solid #333;
   font-size:15px;
   white-space:nowrap;
-  color: #111;
+  color: #e0e0e0;
 }
 .blue-table tr:nth-child(even) td{
-  background:#f0f4fc;
+  background:#2b2b2b;
 }
 .blue-table tr:nth-child(odd) td{
-  background:#e1e9f8;
+  background:#1e1e1e;
 }
 
 .stock-control{
@@ -225,12 +226,12 @@ header h1{
   margin:0;
 }
 .btn-minus{
-  background-color:#fecdd3;
-  color:#111827;
+  background-color:#ef4444;
+  color:#ffffff;
 }
 .btn-plus{
-  background-color:#bbf7d0;
-  color:#111827;
+  background-color:#22c55e;
+  color:#ffffff;
   font-weight:bold;
 }
 
@@ -391,7 +392,6 @@ input, select{
 
 .hidden{display:none!important}
 
-/* 품목/사용자/재료 관리 테이블 어두운 테마 수정 */
 .mgmt-table{
   width:100%;
   border-collapse:collapse;
@@ -563,10 +563,6 @@ input, select{
               </select>
               <input id="itemCategoryInput" placeholder="분류를 추가하세요." autocomplete="off">
             </div>
-            <div style="margin-top:6px; display:flex; gap:4px;">
-              <button type="button" class="action-btn edit-btn" style="flex:1;" onclick="editSelectedCategory()">선택 분류 수정</button>
-              <button type="button" class="action-btn del-btn" style="flex:1;" onclick="deleteSelectedCategory()">선택 분류 삭제</button>
-            </div>
           </div>
 
           <div>
@@ -610,6 +606,24 @@ input, select{
   <section id="pageManage" class="page hidden">
     <div class="top-nav">
       <button class="back-btn" onclick="navTo('home')">← 메인으로</button>
+    </div>
+
+    <div class="card">
+      <button class="toggle-btn" onclick="toggleSection('catMgmtToggle', 'catMgmtArrow')">
+        <span>분류 관리</span>
+        <span id="catMgmtArrow">▼</span>
+      </button>
+      <div id="catMgmtToggle" class="toggle-content hidden">
+        <table class="mgmt-table">
+          <thead>
+            <tr>
+              <th>분류 이름</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody id="catMgmtBody"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="card">
@@ -697,6 +711,10 @@ let currentTab="home";
 
 window.requestList = [];
 
+function koreanSort(a, b) {
+  return String(a).localeCompare(String(b), 'ko', { numeric: true, sensitivity: 'base' });
+}
+
 function localDate(){
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
@@ -723,7 +741,7 @@ window.normalizeData = function(){
 
   if(window.data.categories.length > 0){
     window.data.categories.forEach(c => {
-      if(!window.categories.some(cat => cat.name === c.name)){
+      if(!window.categories.some(cat => cat.id === c.id || cat.name === c.name)){
         window.categories.push(c);
       }
     });
@@ -731,7 +749,7 @@ window.normalizeData = function(){
 
   window.data.items=window.data.items.map(i=>({
     id:i.id||uid("item"),
-    categoryId:i.categoryId||window.categories[0].id,
+    categoryId:i.categoryId||(window.categories[0] ? window.categories[0].id : ""),
     name:String(i.name||""),
     stock:Number.isFinite(Number(i.stock))?Number(i.stock):0,
     minStock:Number.isFinite(Number(i.minStock))?Number(i.minStock):0,
@@ -794,7 +812,8 @@ function populateUserSelectModal(){
   if(window.userList.length === 0){
     modalSelect.innerHTML = '<option value="">(등록된 사용자 없음)</option>';
   } else {
-    modalSelect.innerHTML = window.userList.map(u => `<option value="${esc(u)}"${u === currentUser ? ' selected' : ''}>${esc(u)}</option>`).join("");
+    const sortedUsers = [...window.userList].sort(koreanSort);
+    modalSelect.innerHTML = sortedUsers.map(u => `<option value="${esc(u)}"${u === currentUser ? ' selected' : ''}>${esc(u)}</option>`).join("");
   }
 }
 
@@ -878,6 +897,7 @@ function navTo(tab){
     renderItems();
   }else if(tab==='manage'){
     document.getElementById("pageManage").classList.remove("hidden");
+    renderCatMgmt();
     renderUserMgmt();
     renderItemMgmt();
     renderIngMgmt();
@@ -894,8 +914,10 @@ function updateHeaderInfo(){
 function populateCategorySelects(){
   const lastSelected = document.getElementById("itemCategorySelect") ? document.getElementById("itemCategorySelect").value : "";
 
+  const sortedCategories = [...window.categories].sort((a, b) => koreanSort(a.name, b.name));
+
   const options='<option value="all">전체 분류</option>'+
-    window.categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+    sortedCategories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
 
   document.getElementById("surveyCategory").innerHTML=options;
   document.getElementById("statusCategory").innerHTML=options;
@@ -905,20 +927,20 @@ function populateCategorySelects(){
   }
   
   const formCategoryOptions = '<option value="">-- 기존 선택 --</option>' +
-    window.categories.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");
+    sortedCategories.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");
   
   const selectElem = document.getElementById("itemCategorySelect");
   selectElem.innerHTML = formCategoryOptions;
-  if(lastSelected){
+  if(lastSelected && sortedCategories.some(c => c.name === lastSelected)){
     selectElem.value = lastSelected;
+  } else {
+    selectElem.value = "";
   }
 }
 
 function onCategorySelectChange(){
   const selectVal = document.getElementById("itemCategorySelect").value;
-  if(selectVal){
-    document.getElementById("itemCategoryInput").value = selectVal;
-  }
+  document.getElementById("itemCategoryInput").value = selectVal;
 }
 
 function onCategoryChangeDirect(type){
@@ -929,49 +951,65 @@ function onCategoryChangeDirect(type){
   }
 }
 
-function editSelectedCategory(){
-  const selectElem = document.getElementById("itemCategorySelect");
-  const selectedName = selectElem.value;
-  if(!selectedName){
+function renderCatMgmt(){
+  const tbody = document.getElementById("catMgmtBody");
+  if(!tbody) return;
+  if(window.categories.length === 0){
+    tbody.innerHTML = '<tr><td colspan="2">등록된 분류가 없습니다.</td></tr>';
     return;
   }
-  const newName = prompt("분류 이름을 수정하세요:", selectedName);
-  if(newName && newName.trim() !== "" && newName.trim() !== selectedName){
-    const trimmed = newName.trim();
-    const catObj = window.categories.find(c => c.name === selectedName);
-    if(catObj){
-      catObj.name = trimmed;
-      saveLocal();
-      populateCategorySelects();
-      document.getElementById("itemCategorySelect").value = trimmed;
-      document.getElementById("itemCategoryInput").value = trimmed;
-      renderItemMgmt();
-      renderSurvey();
-      renderStatus();
-    }
-  }
+  
+  const sortedCategories = [...window.categories].sort((a, b) => koreanSort(a.name, b.name));
+  tbody.innerHTML = sortedCategories.map(cat => `
+    <tr>
+      <td><b>${esc(cat.name)}</b></td>
+      <td>
+        <button class="action-btn edit-btn" onclick="editCatMgmt('${cat.id}')">수정</button>
+        <button class="action-btn del-btn" onclick="deleteCatMgmt('${cat.id}')">삭제</button>
+      </td>
+    </tr>
+  `).join("");
 }
 
-function deleteSelectedCategory(){
-  const selectElem = document.getElementById("itemCategorySelect");
-  const selectedName = selectElem.value;
-  if(!selectedName){
-    return;
-  }
-  if(confirm(`[${selectedName}] 분류를 삭제합니다.`)){
-    window.categories = window.categories.filter(c => c.name !== selectedName);
+function editCatMgmt(catId){
+  const catObj = window.categories.find(c => c.id === catId);
+  if(!catObj) return;
+
+  const newName = prompt("분류 이름을 수정하세요:", catObj.name);
+  if(newName && newName.trim() !== "" && newName.trim() !== catObj.name){
+    catObj.name = newName.trim();
     saveLocal();
     populateCategorySelects();
-    document.getElementById("itemCategoryInput").value = "";
+    renderCatMgmt();
     renderItemMgmt();
     renderSurvey();
     renderStatus();
   }
 }
 
+function deleteCatMgmt(catId){
+  const catObj = window.categories.find(c => c.id === catId);
+  if(!catObj) return;
+
+  if(!confirm(`'${catObj.name}' 분류와 연관된 품목이 함께 삭제됩니다. 삭제하시겠습니까?`)) return;
+
+  window.categories = window.categories.filter(c => c.id !== catId);
+  window.data.categories = window.data.categories.filter(c => c.id !== catId);
+  window.data.items = window.data.items.filter(i => i.categoryId !== catObj.id && i.categoryId !== catObj.name);
+
+  saveLocal();
+  populateCategorySelects();
+  renderCatMgmt();
+  renderItemMgmt();
+  renderSurvey();
+  renderStatus();
+}
+
 function renderSurvey(){
   const cat=document.getElementById("surveyCategory").value||"all";
-  const rows=window.data.items.filter(i=>cat==="all"||i.categoryId===cat);
+  let rows=window.data.items.filter(i=>cat==="all"||i.categoryId===cat);
+
+  rows.sort((a, b) => koreanSort(a.name, b.name));
 
   document.getElementById("surveyBody").innerHTML=rows.length?rows.map(i=>{
     const stock = Number(i.stock);
@@ -1004,7 +1042,9 @@ function renderSurvey(){
 
 function renderStatus(){
   const cat=document.getElementById("statusCategory").value||"all";
-  const rows=window.data.items.filter(i=>cat==="all"||i.categoryId===cat);
+  let rows=window.data.items.filter(i=>cat==="all"||i.categoryId===cat);
+
+  rows.sort((a, b) => koreanSort(a.name, b.name));
 
   document.getElementById("statusBody").innerHTML=rows.length?rows.map(i=>{
     const stock = Number(i.stock);
@@ -1058,15 +1098,19 @@ function renderUserMgmt(){
     tbody.innerHTML = '<tr><td colspan="2">등록된 사용자가 없습니다.</td></tr>';
     return;
   }
-  tbody.innerHTML = window.userList.map((u, idx) => `
+  
+  const sortedUsers = [...window.userList].sort(koreanSort);
+  tbody.innerHTML = sortedUsers.map(u => {
+    const originalIdx = window.userList.indexOf(u);
+    return `
     <tr>
       <td><b>${esc(u)}</b></td>
       <td>
-        <button class="action-btn edit-btn" onclick="editUser(${idx})">수정</button>
-        <button class="action-btn del-btn" onclick="deleteUser(${idx})">삭제</button>
+        <button class="action-btn edit-btn" onclick="editUser(${originalIdx})">수정</button>
+        <button class="action-btn del-btn" onclick="deleteUser(${originalIdx})">삭제</button>
       </td>
     </tr>
-  `).join("");
+  `}).join("");
 }
 
 function editUser(idx){
@@ -1084,15 +1128,13 @@ function editUser(idx){
 
 function deleteUser(idx){
   const target = window.userList[idx];
-  if(confirm(`[${target}] 사용자를 삭제합니다.`)){
-    window.userList.splice(idx, 1);
-    if(currentUser === target){
-      currentUser = window.userList.length > 0 ? window.userList[0] : "";
-    }
-    saveLocal();
-    renderUserMgmt();
-    updateHeaderInfo();
+  window.userList.splice(idx, 1);
+  if(currentUser === target){
+    currentUser = window.userList.length > 0 ? window.userList[0] : "";
   }
+  saveLocal();
+  renderUserMgmt();
+  updateHeaderInfo();
 }
 
 function renderItemMgmt(){
@@ -1102,7 +1144,15 @@ function renderItemMgmt(){
   const mgmtCatSelect = document.getElementById("mgmtCategorySelect");
   const selectedCat = mgmtCatSelect ? mgmtCatSelect.value : "all";
 
-  const rows = window.data.items.filter(i => selectedCat === "all" || i.categoryId === selectedCat);
+  let rows = window.data.items.filter(i => selectedCat === "all" || i.categoryId === selectedCat);
+
+  rows.sort((a, b) => {
+    const catA = categoryName(a.categoryId);
+    const catB = categoryName(b.categoryId);
+    const catComp = koreanSort(catA, catB);
+    if(catComp !== 0) return catComp;
+    return koreanSort(a.name, b.name);
+  });
 
   if(rows.length === 0){
     tbody.innerHTML = '<tr><td colspan="4">등록된 품목이 없습니다.</td></tr>';
@@ -1145,13 +1195,11 @@ function deleteItem(id){
   const item = window.data.items.find(i => i.id === id);
   if(!item) return;
 
-  if(confirm(`[${item.name}] 품목을 삭제합니다.`)){
-    window.data.items = window.data.items.filter(i => i.id !== id);
-    saveLocal();
-    renderItemMgmt();
-    renderSurvey();
-    renderStatus();
-  }
+  window.data.items = window.data.items.filter(i => i.id !== id);
+  saveLocal();
+  renderItemMgmt();
+  renderSurvey();
+  renderStatus();
 }
 
 function renderIngMgmt(){
@@ -1161,15 +1209,19 @@ function renderIngMgmt(){
     tbody.innerHTML = '<tr><td colspan="2">등록된 재료가 없습니다.</td></tr>';
     return;
   }
-  tbody.innerHTML = window.registeredIngredients.map((ing, idx) => `
+  
+  const sortedIngs = [...window.registeredIngredients].sort((a, b) => koreanSort(a.name, b.name));
+  tbody.innerHTML = sortedIngs.map(ing => {
+    const originalIdx = window.registeredIngredients.findIndex(item => item.id === ing.id);
+    return `
     <tr>
       <td><b>${esc(ing.name)}</b></td>
       <td>
-        <button class="action-btn edit-btn" onclick="editIngredient(${idx})">수정</button>
-        <button class="action-btn del-btn" onclick="deleteIngredient(${idx})">삭제</button>
+        <button class="action-btn edit-btn" onclick="editIngredient(${originalIdx})">수정</button>
+        <button class="action-btn del-btn" onclick="deleteIngredient(${originalIdx})">삭제</button>
       </td>
     </tr>
-  `).join("");
+  `}).join("");
 }
 
 function editIngredient(idx){
@@ -1183,12 +1235,9 @@ function editIngredient(idx){
 }
 
 function deleteIngredient(idx){
-  const target = window.registeredIngredients[idx];
-  if(confirm(`[${target.name}] 재료를 삭제합니다.`)){
-    window.registeredIngredients.splice(idx, 1);
-    saveLocal();
-    renderIngMgmt();
-  }
+  window.registeredIngredients.splice(idx, 1);
+  saveLocal();
+  renderIngMgmt();
 }
 
 document.getElementById("userForm").addEventListener("submit", e => {
@@ -1318,7 +1367,9 @@ function renderReqChoiceList(){
     ul.innerHTML = '<li style="text-align:center; color:#888; padding:10px;">등록된 재료가 없습니다.<br>품목/사용자/재료 등록 탭에서 먼저 재료를 등록하세요.</li>';
     return;
   }
-  ul.innerHTML = window.registeredIngredients.map(ing => `
+  
+  const sortedIngs = [...window.registeredIngredients].sort((a, b) => koreanSort(a.name, b.name));
+  ul.innerHTML = sortedIngs.map(ing => `
     <li class="todo-item">
       <input type="checkbox" class="req-choice-cb" value="${esc(ing.name)}" id="ing_cb_${ing.id}">
       <label for="ing_cb_${ing.id}" style="margin:0; font-weight:normal; cursor:pointer; flex:1;">${esc(ing.name)}</label>
@@ -1379,7 +1430,9 @@ function renderNoticeList(){
     ul.innerHTML = '<li style="text-align:center; color:#888; padding:10px;">재료 요청 내역이 없습니다.</li>';
     return;
   }
-  ul.innerHTML = window.requestList.map(item => `
+  
+  const sortedList = [...window.requestList].sort((a, b) => koreanSort(a.text, b.text));
+  ul.innerHTML = sortedList.map(item => `
     <li class="todo-item ${item.checked ? 'checked' : ''}">
       <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleNoticeCheck('${item.id}')">
       <span>${esc(item.text)}</span>
@@ -1409,6 +1462,7 @@ function checkAndShowNotification(){
 window.renderAll = function(){
   populateCategorySelects();
   updateHeaderInfo();
+  renderCatMgmt();
   renderUserMgmt();
   renderItemMgmt();
   renderIngMgmt();
