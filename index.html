@@ -169,7 +169,6 @@ header h1{
   white-space:nowrap;
 }
 
-/* 어두운 테마 스타일 적용 */
 .blue-table{
   width:100%;
   border-collapse:collapse;
@@ -488,6 +487,10 @@ input, select{
       <th id="dateLabel">날짜</th>
       <td id="displayDate">-</td>
     </tr>
+    <tr>
+      <th>시간</th>
+      <td id="displayTime">-</td>
+    </tr>
   </table>
 
   <section id="pageHome" class="page">
@@ -696,6 +699,7 @@ const USERS_LIST_KEY="restaurant_inventory_users_list_v9";
 const REQUEST_ITEMS_KEY="restaurant_inventory_request_items_v9";
 const REGISTERED_INGREDIENTS_KEY="restaurant_inventory_registered_ingredients_v9";
 const NOTIFICATION_SHOWN_KEY="restaurant_inventory_notification_shown_v9";
+const LAST_ACTION_TIME_KEY="restaurant_inventory_last_action_time_v9";
 
 window.categories=[
   {id:"cat_1",name:"계근상"},
@@ -708,6 +712,7 @@ window.registeredIngredients = [];
 window.data={items:[],records:[],categories:[]};
 let currentUser="";
 let currentTab="home";
+let lastActionTime = "";
 
 window.requestList = [];
 
@@ -717,7 +722,26 @@ function koreanSort(a, b) {
 
 function localDate(){
   const d=new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const date = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${date}`;
+}
+
+function localTime(){
+  const d=new Date();
+  let hours = d.getHours();
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0시일 경우 12로 변경
+  const strHours = String(hours).padStart(2, "0");
+  return `${ampm} ${strHours}:${minutes}`;
+}
+
+function recordActionTime(){
+  lastActionTime = localTime();
+  localStorage.setItem(LAST_ACTION_TIME_KEY, lastActionTime);
 }
 
 function uid(prefix){
@@ -768,6 +792,7 @@ function saveLocal(){
   localStorage.setItem(USERS_LIST_KEY, JSON.stringify(window.userList));
   localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(window.requestList));
   localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(window.registeredIngredients));
+  if(lastActionTime) localStorage.setItem(LAST_ACTION_TIME_KEY, lastActionTime);
 
   if(window.saveToFirestore){
     window.saveToFirestore();
@@ -794,6 +819,9 @@ function loadLocal(){
     const ingList=JSON.parse(localStorage.getItem(REGISTERED_INGREDIENTS_KEY));
     if(Array.isArray(ingList)) window.registeredIngredients = ingList;
   }catch(e){}
+
+  const savedTime = localStorage.getItem(LAST_ACTION_TIME_KEY);
+  if(savedTime) lastActionTime = savedTime;
 
   window.normalizeData();
 
@@ -828,9 +856,13 @@ function login(){
     document.getElementById("loginOverlay").classList.add("hidden");
     return;
   }
-  currentUser = selectedName;
+  if(currentUser !== selectedName){
+    currentUser = selectedName;
+    recordActionTime();
+  }
   localStorage.setItem(USER_KEY, currentUser);
   document.getElementById("loginOverlay").classList.add("hidden");
+  saveLocal();
   updateHeaderInfo();
   renderAll();
 }
@@ -909,9 +941,15 @@ function updateHeaderInfo(){
   document.getElementById("displayUser").textContent = currentUser || "(선택 필요)";
   document.getElementById("dateLabel").textContent = "날짜";
   document.getElementById("displayDate").textContent = localDate();
+  document.getElementById("displayTime").textContent = lastActionTime || "-";
 }
 
 function populateCategorySelects(){
+  const surveySelect = document.getElementById("surveyCategory");
+  const statusSelect = document.getElementById("statusCategory");
+  const prevSurveyVal = surveySelect ? surveySelect.value : "all";
+  const prevStatusVal = statusSelect ? statusSelect.value : "all";
+  
   const lastSelected = document.getElementById("itemCategorySelect") ? document.getElementById("itemCategorySelect").value : "";
 
   const sortedCategories = [...window.categories].sort((a, b) => koreanSort(a.name, b.name));
@@ -919,8 +957,14 @@ function populateCategorySelects(){
   const options='<option value="all">전체 분류</option>'+
     sortedCategories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
 
-  document.getElementById("surveyCategory").innerHTML=options;
-  document.getElementById("statusCategory").innerHTML=options;
+  if(surveySelect) {
+    surveySelect.innerHTML = options;
+    if(prevSurveyVal) surveySelect.value = prevSurveyVal;
+  }
+  if(statusSelect) {
+    statusSelect.innerHTML = options;
+    if(prevStatusVal) statusSelect.value = prevStatusVal;
+  }
   
   if(document.getElementById("mgmtCategorySelect")){
     document.getElementById("mgmtCategorySelect").innerHTML = options;
@@ -930,11 +974,13 @@ function populateCategorySelects(){
     sortedCategories.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");
   
   const selectElem = document.getElementById("itemCategorySelect");
-  selectElem.innerHTML = formCategoryOptions;
-  if(lastSelected && sortedCategories.some(c => c.name === lastSelected)){
-    selectElem.value = lastSelected;
-  } else {
-    selectElem.value = "";
+  if(selectElem){
+    selectElem.innerHTML = formCategoryOptions;
+    if(lastSelected && sortedCategories.some(c => c.name === lastSelected)){
+      selectElem.value = lastSelected;
+    } else {
+      selectElem.value = "";
+    }
   }
 }
 
@@ -1082,6 +1128,7 @@ function changeStock(id,delta){
   item.updatedAt=new Date().toISOString();
   item.checkedAt=localDate();
 
+  recordActionTime();
   saveLocal();
   renderSurvey();
   updateHeaderInfo();
@@ -1119,7 +1166,18 @@ function editUser(idx){
   if(newName && newName.trim() !== ""){
     const trimmed = newName.trim();
     window.userList[idx] = trimmed;
-    if(currentUser === oldName) currentUser = trimmed;
+    if(currentUser === oldName) {
+      currentUser = trimmed;
+      localStorage.setItem(USER_KEY, currentUser);
+    }
+    
+    // 품목의 작성자/수정자 정보 수정
+    window.data.items.forEach(i => {
+      if(i.createdBy === oldName) i.createdBy = trimmed;
+      if(i.updatedBy === oldName) i.updatedBy = trimmed;
+    });
+
+    recordActionTime();
     saveLocal();
     renderUserMgmt();
     updateHeaderInfo();
@@ -1131,10 +1189,31 @@ function deleteUser(idx){
   window.userList.splice(idx, 1);
   if(currentUser === target){
     currentUser = window.userList.length > 0 ? window.userList[0] : "";
+    localStorage.setItem(USER_KEY, currentUser);
   }
   saveLocal();
   renderUserMgmt();
   updateHeaderInfo();
+}
+
+function editItem(id){
+  const item = window.data.items.find(i => i.id === id);
+  if(!item) return;
+
+  const newName = prompt("품목 이름을 수정하세요:", item.name);
+  if(newName === null) return;
+  
+  const newMin = prompt("최소 재고 수를 수정하세요:", item.minStock);
+  if(newMin === null) return;
+
+  if(newName.trim() !== ""){
+    item.name = newName.trim();
+    item.minStock = Math.max(0, Number(newMin) || 0);
+    saveLocal();
+    renderItemMgmt();
+    renderSurvey();
+    renderStatus();
+  }
 }
 
 function renderItemMgmt(){
@@ -1169,26 +1248,6 @@ function renderItemMgmt(){
       </td>
     </tr>
   `).join("");
-}
-
-function editItem(id){
-  const item = window.data.items.find(i => i.id === id);
-  if(!item) return;
-
-  const newName = prompt("품목 이름을 수정하세요:", item.name);
-  if(newName === null) return;
-  
-  const newMin = prompt("최소 재고 수를 수정하세요:", item.minStock);
-  if(newMin === null) return;
-
-  if(newName.trim() !== ""){
-    item.name = newName.trim();
-    item.minStock = Math.max(0, Number(newMin) || 0);
-    saveLocal();
-    renderItemMgmt();
-    renderSurvey();
-    renderStatus();
-  }
 }
 
 function deleteItem(id){
@@ -1248,7 +1307,10 @@ document.getElementById("userForm").addEventListener("submit", e => {
 
   if(!window.userList.includes(name)){
     window.userList.push(name);
-    if(!currentUser) currentUser = name;
+    if(!currentUser) {
+      currentUser = name;
+      localStorage.setItem(USER_KEY, currentUser);
+    }
     saveLocal();
     renderUserMgmt();
     updateHeaderInfo();
@@ -1383,11 +1445,13 @@ function shareDataWithRequests(){
     return;
   }
   
-  window.requestList = Array.from(checkboxes).map(cb => ({
+  const newRequests = Array.from(checkboxes).map(cb => ({
     id: uid("req"),
     text: cb.value,
     checked: false
   }));
+
+  window.requestList = window.requestList.concat(newRequests);
 
   window.lastRequestBatchId = uid("batch");
   localStorage.removeItem(NOTIFICATION_SHOWN_KEY);
@@ -1395,6 +1459,8 @@ function shareDataWithRequests(){
   saveLocal();
   closeRequestModal();
   updateBellBadge();
+
+  openBellNotice();
 }
 
 function openBellNotice(){
@@ -1406,9 +1472,8 @@ function openBellNotice(){
 }
 
 function closeNoticeModal(){
-  const allChecked = window.requestList.length > 0 && window.requestList.every(i => i.checked);
-  if(allChecked){
-    window.requestList = [];
+  if(window.requestList.length > 0){
+    window.requestList = window.requestList.filter(i => !i.checked);
   }
   saveLocal();
   updateBellBadge();
@@ -1477,6 +1542,7 @@ loadLocal();
 
 navTo('home');
 window.renderAll();
+
 </script>
 
 <script type="module">
@@ -1505,6 +1571,7 @@ window.renderAll();
       registeredIngredients: window.registeredIngredients,
       categories: window.categories,
       lastRequestBatchId: window.lastRequestBatchId || null,
+      lastActionTime: localStorage.getItem("restaurant_inventory_last_action_time_v9") || "",
       updatedAt: new Date().toISOString()
     }).catch(err => console.error("Firebase 저장 실패:", err));
   };
@@ -1518,6 +1585,9 @@ window.renderAll();
       if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
       if (serverData.categories) window.categories = serverData.categories;
       if (serverData.lastRequestBatchId) window.lastRequestBatchId = serverData.lastRequestBatchId;
+      if (serverData.lastActionTime) {
+        localStorage.setItem("restaurant_inventory_last_action_time_v9", serverData.lastActionTime);
+      }
       
       if(window.normalizeData) window.normalizeData();
       if(window.renderAll) window.renderAll();
