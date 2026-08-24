@@ -487,7 +487,7 @@ input, select{
   <div class="login-box">
     <h2>확인자 선택</h2>
     <select id="userSelectModal"></select>
-    <button type="button" onclick="login()">확인</button>
+    <button type="button" onclick="login()">완료</button>
   </div>
 </div>
 
@@ -904,7 +904,6 @@ function setupLogin(){
 
 function startSurvey(){
   navTo('survey');
-  setupLogin();
 }
 
 function login(){
@@ -917,6 +916,7 @@ function login(){
   currentUser = selectedName;
   localStorage.setItem(USER_KEY, currentUser);
   document.getElementById("loginOverlay").classList.add("hidden");
+  recordActionTime();
   saveLocal();
   updateHeaderInfo();
   renderAll();
@@ -929,9 +929,7 @@ function handleUserClick(){
 }
 
 function handleManualSave(){
-  recordActionTime();
-  saveLocal();
-  updateHeaderInfo();
+  setupLogin();
 }
 
 function toggleSection(contentId, arrowId) {
@@ -1173,15 +1171,11 @@ function renderStatus(){
 }
 
 function changeStock(id,delta){
-  if(!currentUser){
-    setupLogin();
-    return;
-  }
   const item=window.data.items.find(i=>i.id===id);
   if(!item)return;
 
   item.stock=Math.max(0, Number(item.stock)+delta);
-  item.updatedBy=currentUser;
+  if(currentUser) item.updatedBy=currentUser;
   item.updatedAt=new Date().toISOString();
   item.checkedAt=localDate();
 
