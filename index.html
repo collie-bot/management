@@ -61,21 +61,15 @@ header h1{
   white-space:nowrap;
 }
 
-/* 확인자 이름 폰트 크기 3pt 증대 (18px -> 21px) */
 #displayUser {
   font-size:21px;
 }
 
-/* 날짜와 시간 폰트 크기 */
 #displayDate, #displayTime {
   font-size:21px;
 }
 .info-table th{
   background:#3b62ba;
-}
-.clickable-user {
-  cursor: pointer;
-  text-decoration: underline;
 }
 
 .menu-grid{
@@ -228,19 +222,16 @@ header h1{
   gap:6px;
 }
 
-/* 폰트 크기 기본 스타일 지정 */
 .stock-val{
   font-weight:bold;
   min-width:24px;
   text-align:center;
 }
 
-/* 3. 재고조사 탭의 재고 숫자 폰트 크기: 1pt 확대 (19px -> 20px) */
 #pageSurvey .stock-val {
   font-size: 20px;
 }
 
-/* 1. 재고현황 탭의 재고 숫자 폰트 크기: 1pt 축소 (25px -> 24px) */
 #pageStatus .stock-val {
   font-size: 24px;
 }
@@ -323,12 +314,10 @@ header h1{
   overflow-y: auto;
 }
 
-/* 재료 요청 목록 라벨(체크박스 옆 텍스트) 폰트 크기 2pt 증대 (13px -> 15px) */
 .todo-list label {
   font-size: 15px !important;
 }
 
-/* 2. 재료 요청 목록 및 알림 항목 폰트 크기 2pt 증대 (18px -> 20px) */
 .todo-item {
   display: flex;
   align-items: center;
@@ -425,7 +414,6 @@ input, select{
   margin-top:12px;
 }
 
-/* 상태 폰트 크기 3pt 증대 (14px -> 17px) */
 .status-tag{font-weight:800;padding:2px 6px;border-radius:4px;display:inline-block;font-size:17px;white-space:nowrap}
 .status-sufficient{color:#16a34a}
 .status-warning{color:#ffe600; text-shadow: 0px 0px 1px #888;}
@@ -486,8 +474,8 @@ input, select{
 <div id="loginOverlay" class="login-overlay hidden">
   <div class="login-box">
     <h2>확인자 선택</h2>
-    <select id="userSelectModal"></select>
-    <button type="button" onclick="login()">완료</button>
+    <!-- 드롭다운 목록에서 선택하는 즉시 login()이 실행되도록 설정 -->
+    <select id="userSelectModal" onchange="login()"></select>
   </div>
 </div>
 
@@ -523,7 +511,8 @@ input, select{
   <table id="infoTable" class="info-table hidden">
     <tr>
       <th>확인자</th>
-      <td id="displayUser" onclick="handleUserClick()">-</td>
+      <!-- 클릭 시 반응하지 않도록 onclick 제거 -->
+      <td id="displayUser">-</td>
     </tr>
     <tr>
       <th id="dateLabel">날짜</th>
@@ -893,7 +882,9 @@ function populateUserSelectModal(){
     modalSelect.innerHTML = '<option value="">(등록된 사용자 없음)</option>';
   } else {
     const sortedUsers = [...window.userList].sort(koreanSort);
-    modalSelect.innerHTML = sortedUsers.map(u => `<option value="${esc(u)}"${u === currentUser ? ' selected' : ''}>${esc(u)}</option>`).join("");
+    // 선택 안내 기본 옵션 추가
+    const defaultOption = '<option value="" disabled selected>확인자 이름을 선택하세요</option>';
+    modalSelect.innerHTML = defaultOption + sortedUsers.map(u => `<option value="${esc(u)}">${esc(u)}</option>`).join("");
   }
 }
 
@@ -922,10 +913,9 @@ function login(){
   renderAll();
 }
 
+/* 확인자 이름을 눌러서 바꾸는 기능 비활성화 */
 function handleUserClick(){
-  if(currentTab === 'survey'){
-    setupLogin();
-  }
+  return;
 }
 
 function handleManualSave(){
@@ -958,15 +948,9 @@ function navTo(tab){
   document.getElementById("pageTitle").textContent = titles[tab] || "계근상 재고관리";
 
   const infoTable = document.getElementById("infoTable");
-  const displayUser = document.getElementById("displayUser");
 
   if(tab === 'survey' || tab === 'status'){
     infoTable.classList.remove("hidden");
-    if(tab === 'survey'){
-      displayUser.classList.add("clickable-user");
-    } else {
-      displayUser.classList.remove("clickable-user");
-    }
   } else {
     infoTable.classList.add("hidden");
   }
@@ -1639,7 +1623,6 @@ window.renderAll();
       if (serverData.categories) window.categories = serverData.categories;
       if (serverData.lastRequestBatchId) window.lastRequestBatchId = serverData.lastRequestBatchId;
       
-      // 실시간 수신 시 Firestore에 저장된 날짜와 시간 업데이트
       if (serverData.lastActionTime) {
         lastActionTime = serverData.lastActionTime;
         localStorage.setItem("restaurant_inventory_last_action_time_v9", serverData.lastActionTime);
