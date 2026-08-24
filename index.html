@@ -1638,10 +1638,14 @@ window.renderAll();
       if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
       if (serverData.categories) window.categories = serverData.categories;
       if (serverData.lastRequestBatchId) window.lastRequestBatchId = serverData.lastRequestBatchId;
+      
+      // 실시간 수신 시 Firestore에 저장된 날짜와 시간 업데이트
       if (serverData.lastActionTime) {
+        lastActionTime = serverData.lastActionTime;
         localStorage.setItem("restaurant_inventory_last_action_time_v9", serverData.lastActionTime);
       }
       if (serverData.lastSaveDate) {
+        lastSaveDate = serverData.lastSaveDate;
         localStorage.setItem("restaurant_inventory_last_save_date_v9", serverData.lastSaveDate);
       }
       
