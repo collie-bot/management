@@ -1619,6 +1619,7 @@ window.renderAll();
     setDoc(mainDocRef, {
       data: window.data,
       userList: window.userList,
+      currentUser: currentUser || "",
       requestList: window.requestList,
       registeredIngredients: window.registeredIngredients,
       categories: window.categories,
@@ -1634,6 +1635,10 @@ window.renderAll();
       const serverData = docSnap.data();
       if (serverData.data) window.data = serverData.data;
       if (serverData.userList) window.userList = serverData.userList;
+      if (serverData.currentUser !== undefined) {
+        currentUser = serverData.currentUser;
+        localStorage.setItem("restaurant_inventory_user_v9", currentUser);
+      }
       if (serverData.requestList) window.requestList = serverData.requestList;
       if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
       if (serverData.categories) window.categories = serverData.categories;
