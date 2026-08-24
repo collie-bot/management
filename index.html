@@ -839,6 +839,7 @@ function saveLocal(){
   localStorage.setItem(USERS_LIST_KEY, JSON.stringify(window.userList));
   localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(window.requestList));
   localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(window.registeredIngredients));
+  if(currentUser) localStorage.setItem(USER_KEY, currentUser);
   if(lastActionTime) localStorage.setItem(LAST_ACTION_TIME_KEY, lastActionTime);
   if(lastSaveDate) localStorage.setItem(LAST_SAVE_DATE_KEY, lastSaveDate);
 
