@@ -1627,15 +1627,15 @@ window.renderAll();
     }
   };
 
-  // 2. 특정 대상에게 푸시 알림을 쏘는 함수
+  // 2. 특정 대상에게 푸시 알림을 쏘는 함수 (수정 완료)
   window.sendPushNotification = async function(targetUserId, title, body) {
     try {
       const tokenDoc = await getDoc(doc(db, "user_tokens", targetUserId));
       if (tokenDoc.exists()) {
         const targetToken = tokenDoc.data().token;
 
-        // Make.com 웹훅으로 알림 데이터 발송
-        fetch(https://"hook.eu1.make.com/dxlfg2b17aqggwh1nt5ursr7js58xqbf", {
+        // Make.com 웹훅으로 알림 데이터 발송 (URL 큰따옴표 위치 보정)
+        fetch("https://hook.eu1.make.com/dxlfg2b17aqggwh1nt5ursr7js58xqbf", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
