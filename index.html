@@ -485,6 +485,21 @@ input, select{
 </head>
 <body>
 
+<!-- 저장 확인 모달 -->
+<div id="saveModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h2>저장 확인</h2>
+    <p style="font-size:14px; color:#ccc; text-align:center; margin-bottom:12px;">
+      저장자 이름을 선택해주세요.
+    </p>
+    <select id="saveUserSelect" style="margin-bottom:16px; padding:10px; background:#2b2b2b; color:#fff; border:1px solid #444;"></select>
+    <div style="display:flex; gap:8px;">
+      <button type="button" class="confirm-btn" style="background:#6b7280; flex:1;" onclick="closeSaveModal()">취소</button>
+      <button type="button" class="confirm-btn" style="background:#22c55e; flex:1;" onclick="confirmSave()">저장</button>
+    </div>
+  </div>
+</div>
+
 <div id="loginOverlay" class="login-overlay hidden">
   <div class="login-box">
     <h2>확인자 선택</h2>
@@ -910,7 +925,38 @@ function setupLogin(){
 }
 
 function startSurvey(){
-  navTo('survey');
+  setupLogin();
+}
+
+/* 3. 저장 버튼 클릭 시 이름 확인 모달 띄우기 */
+function handleManualSave(){
+  const saveSelect = document.getElementById("saveUserSelect");
+  if(window.userList.length === 0){
+    saveSelect.innerHTML = '<option value="">(등록된 사용자 없음)</option>';
+  } else {
+    const sortedUsers = [...window.userList].sort(koreanSort);
+    saveSelect.innerHTML = sortedUsers.map(u => `
+      <option value="${esc(u)}" ${u === currentUser ? 'selected' : ''}>${esc(u)}</option>
+    `).join("");
+  }
+  document.getElementById("saveModal").classList.remove("hidden");
+}
+
+function closeSaveModal(){
+  document.getElementById("saveModal").classList.add("hidden");
+}
+
+function confirmSave(){
+  const selectedName = document.getElementById("saveUserSelect").value;
+  if(selectedName){
+    currentUser = selectedName;
+    localStorage.setItem(USER_KEY, currentUser);
+  }
+  recordActionTime();
+  saveLocal();
+  updateHeaderInfo();
+  closeSaveModal();
+  alert("성공적으로 저장되었습니다.");
 }
 
 function login(){
@@ -1505,7 +1551,7 @@ function shareDataWithRequests(){
   window.requestList = window.requestList.concat(newRequests);
 
   window.lastRequestBatchId = uid("batch");
-  localStorage.removeItem(NOTIFICATION_SHOWN_KEY);
+  localStorage.setItem(NOTIFICATION_SHOWN_KEY, window.lastRequestBatchId);
 
   saveLocal();
   closeRequestModal();
@@ -1526,11 +1572,12 @@ function openBellNotice(){
   document.getElementById("noticeModal").classList.remove("hidden");
 }
 
+/* 2. 알림 창 확인 시 데이터 저장 및 Firebase 동기화 */
 function closeNoticeModal(){
   if(window.requestList.length > 0){
     window.requestList = window.requestList.filter(i => !i.checked);
   }
-  saveLocal();
+  saveLocal(); // 로컬 및 Firebase에 정제된 요청 목록 반영
   updateBellBadge();
   document.getElementById("noticeModal").classList.add("hidden");
 }
@@ -1620,16 +1667,12 @@ window.renderAll();
   const messaging = getMessaging(app);
   const mainDocRef = doc(db, "inventory_app", "main_data");
 
-  // 기기 토큰 등록 함수
   window.registerDeviceToken = async function(targetUserId) {
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        
-        // 서비스 워커 직접 등록
         const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
 
-        // serviceWorkerRegistration 옵션 지정
         const currentToken = await getToken(messaging, { 
           vapidKey: "BOY3B712J_Cn_7-6HC7TzSoBimt4EU3gwxxL2j8wkvRal5QjHb9urDHUuNLC2P9mU3a_zCcKckLolhXJvNgHUuI",
           serviceWorkerRegistration: registration
@@ -1642,10 +1685,10 @@ window.renderAll();
           });
           alert(`${targetUserId} 님 기기의 알림 수신 등록이 완료되었습니다.`);
         } else {
-          alert("토큰 생성에 실패했습니다. 서비스 워커 설정을 확인해주세요.");
+          alert("토큰 생성에 실패했습니다.");
         }
       } else {
-        alert("알림 권한이 거부되었습니다. 삼성 브라우저 설정에서 알림을 허용해주세요.");
+        alert("알림 권한이 거부되었습니다.");
       }
     } catch (err) {
       console.error("토큰 등록 실패:", err);
@@ -1653,7 +1696,6 @@ window.renderAll();
     }
   };
 
-  // 푸시 알림 발송 함수
   window.sendPushNotification = async function(targetUserId, title, body) {
     try {
       const tokenDoc = await getDoc(doc(db, "user_tokens", targetUserId));

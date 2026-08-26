@@ -1,4 +1,3 @@
-// firebase-messaging-sw.js
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js');
 
@@ -13,11 +12,23 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/icon.png' // 필요시 아이콘 경로 지정
-  };
-  self.registration.showNotification(notificationTitle, notificationOptions);
+// 푸시 알림 클릭 시 실행
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+      // 이미 열려있는 앱 탭이 있다면 포커스
+      for (let i = 0; i < clientList.length; i++) {
+        let client = clientList[i];
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // 열려있는 탭이 없다면 새 창으로 열기
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+  );
 });
