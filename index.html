@@ -415,19 +415,6 @@ input, select{
   border-radius:8px;
 }
 
-.push-register-btn {
-  background:#8b5cf6;
-  color:#fff;
-  border:0;
-  padding:14px 16px;
-  font-size:16px;
-  font-weight:bold;
-  width:100%;
-  margin-top:16px;
-  border-radius:8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
 .status-tag{font-weight:800;padding:2px 6px;border-radius:4px;display:inline-block;font-size:17px;white-space:nowrap}
 .status-sufficient{color:#16a34a}
 .status-warning{color:#ffe600; text-shadow: 0px 0px 1px #888;}
@@ -569,11 +556,6 @@ input, select{
         <span id="bellBadge" class="bell-badge hidden">!</span>
       </button>
     </div>
-
-    <!-- 사장님 기기 토큰 등록 버튼 -->
-    <button type="button" class="push-register-btn" onclick="registerBossNotification()">
-      🔔 사장님 알림 수신 등록하기
-    </button>
   </section>
 
   <section id="pageSurvey" class="page hidden">
@@ -975,14 +957,6 @@ function login(){
   saveLocal();
   updateHeaderInfo();
   renderAll();
-}
-
-function registerBossNotification() {
-  if (window.registerDeviceToken) {
-    window.registerDeviceToken("사장님");
-  } else {
-    alert("알림 설정 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.");
-  }
 }
 
 function toggleSection(contentId, arrowId) {
@@ -1664,37 +1638,7 @@ window.renderAll();
   // 포그라운드 메시지 수신 시 중복 알림 방지를 위한 처리 (앱이 열려있을 때 브라우저 팝업이 두 번 뜨는 것 방지)
   onMessage(messaging, (payload) => {
     console.log('Foreground message received. ', payload);
-    // 앱 내부 UI 배지나 목록 갱신은 onSnapshot이 담당하므로 포그라운드 기본 팝업은 브라우저 알림 대신 커스텀 모달이나 데이터 갱신으로 유도
   });
-
-  window.registerDeviceToken = async function(targetUserId) {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
-
-        const currentToken = await getToken(messaging, { 
-          vapidKey: "BOY3B712J_Cn_7-6HC7TzSoBimt4EU3gwxxL2j8wkvRal5QjHb9urDHUuNLC2P9mU3a_zCcKckLolhXJvNgHUuI",
-          serviceWorkerRegistration: registration
-        });
-
-        if (currentToken) {
-          await setDoc(doc(db, "user_tokens", targetUserId), {
-            token: currentToken,
-            updatedAt: new Date().toISOString()
-          });
-          alert(`${targetUserId} 님 기기의 알림 수신 등록이 완료되었습니다.`);
-        } else {
-          alert("토큰 생성에 실패했습니다.");
-        }
-      } else {
-        alert("알림 권한이 거부되었습니다.");
-      }
-    } catch (err) {
-      console.error("토큰 등록 실패:", err);
-      alert("알림 등록 중 오류가 발생했습니다: " + err.message);
-    }
-  };
 
   window.sendPushNotification = async function(targetUserId, title, body) {
     try {
