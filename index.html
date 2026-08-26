@@ -1625,8 +1625,14 @@ window.renderAll();
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
+        
+        // 서비스 워커 직접 등록
+        const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+
+        // serviceWorkerRegistration 옵션 지정
         const currentToken = await getToken(messaging, { 
-          vapidKey: "BOY3B712J_Cn_7-6HC7TzSoBimt4EU3gwxxL2j8wkvRal5QjHb9urDHUuNLC2P9mU3a_zCcKckLolhXJvNgHUuI"
+          vapidKey: "BOY3B712J_Cn_7-6HC7TzSoBimt4EU3gwxxL2j8wkvRal5QjHb9urDHUuNLC2P9mU3a_zCcKckLolhXJvNgHUuI",
+          serviceWorkerRegistration: registration
         });
 
         if (currentToken) {
