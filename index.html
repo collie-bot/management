@@ -474,7 +474,6 @@ input, select{
 <div id="loginOverlay" class="login-overlay hidden">
   <div class="login-box">
     <h2>확인자 선택</h2>
-    <!-- 드롭다운 목록에서 선택하는 즉시 login()이 실행되도록 설정 -->
     <select id="userSelectModal" onchange="login()"></select>
   </div>
 </div>
@@ -511,7 +510,6 @@ input, select{
   <table id="infoTable" class="info-table hidden">
     <tr>
       <th>확인자</th>
-      <!-- 클릭 시 반응하지 않도록 onclick 제거 -->
       <td id="displayUser">-</td>
     </tr>
     <tr>
@@ -882,7 +880,6 @@ function populateUserSelectModal(){
     modalSelect.innerHTML = '<option value="">(등록된 사용자 없음)</option>';
   } else {
     const sortedUsers = [...window.userList].sort(koreanSort);
-    // 선택 안내 기본 옵션 추가
     const defaultOption = '<option value="" disabled selected>확인자 이름을 선택하세요</option>';
     modalSelect.innerHTML = defaultOption + sortedUsers.map(u => `<option value="${esc(u)}">${esc(u)}</option>`).join("");
   }
@@ -911,9 +908,13 @@ function login(){
   saveLocal();
   updateHeaderInfo();
   renderAll();
+
+  // 재고조사 저장 완료 알림 발송 ('사장님' 대상)
+  if(window.sendPushNotification) {
+    window.sendPushNotification("사장님", "📦 재고조사 완료", `${currentUser}님이 재고 조사를 완료했습니다.`);
+  }
 }
 
-/* 확인자 이름을 눌러서 바꾸는 기능 비활성화 */
 function handleUserClick(){
   return;
 }
@@ -1476,9 +1477,10 @@ function shareDataWithRequests(){
     return;
   }
   
-  const newRequests = Array.from(checkboxes).map(cb => ({
+  const reqNames = Array.from(checkboxes).map(cb => cb.value);
+  const newRequests = reqNames.map(text => ({
     id: uid("req"),
-    text: cb.value,
+    text: text,
     checked: false
   }));
 
@@ -1492,6 +1494,11 @@ function shareDataWithRequests(){
   updateBellBadge();
 
   openBellNotice();
+
+  // 특정 대상('사장님')에게 재료 요청 푸시 알림 발송
+  if(window.sendPushNotification) {
+    window.sendPushNotification("사장님", "⚠️ 재료 요청 알림", `요청 재료: ${reqNames.join(", ")}`);
+  }
 }
 
 function openBellNotice(){
@@ -1578,7 +1585,8 @@ window.renderAll();
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCNiAEn7XnA0_GbszPlfI1ZlWkrmEEyWe8",
@@ -1592,7 +1600,55 @@ window.renderAll();
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const messaging = getMessaging(app);
   const mainDocRef = doc(db, "inventory_app", "main_data");
+
+  // 1. 특정 대상 폰의 기기 토큰을 등록하는 함수
+  window.registerDeviceToken = async function(targetUserId) {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        const currentToken = await getToken(messaging, { 
+          vapidKey: "BOY3B712J_Cn_7-6HC7TzSoBimt4EU3gwxxL2j8wkvRal5QjHb9urDHUuNLC2P9mU3a_zCcKckLolhXJvNgHUuI"
+        });
+
+        if (currentToken) {
+          await setDoc(doc(db, "user_tokens", targetUserId), {
+            token: currentToken,
+            updatedAt: new Date().toISOString()
+          });
+          alert(`${targetUserId} 님 기기의 알림 수신 등록이 완료되었습니다.`);
+        }
+      } else {
+        alert("알림 권한이 거부되었습니다.");
+      }
+    } catch (err) {
+      console.error("토큰 등록 실패:", err);
+    }
+  };
+
+  // 2. 특정 대상에게 푸시 알림을 쏘는 함수
+  window.sendPushNotification = async function(targetUserId, title, body) {
+    try {
+      const tokenDoc = await getDoc(doc(db, "user_tokens", targetUserId));
+      if (tokenDoc.exists()) {
+        const targetToken = tokenDoc.data().token;
+
+        // Make.com 웹훅으로 알림 데이터 발송
+        fetch(https://"hook.eu1.make.com/dxlfg2b17aqggwh1nt5ursr7js58xqbf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token: targetToken,
+            title: title,
+            body: body
+          })
+        });
+      }
+    } catch (e) {
+      console.error("푸시 전송 오류:", e);
+    }
+  };
 
   window.saveToFirestore = function() {
     setDoc(mainDocRef, {
