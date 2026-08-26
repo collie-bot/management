@@ -12,6 +12,17 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
+// 백그라운드 메시지 수신 핸들러 (알림이 뜨지 않던 주요 원인 해결)
+messaging.onBackgroundMessage(function(payload) {
+  const notificationTitle = payload.notification?.title || payload.data?.title || "알림";
+  const notificationOptions = {
+    body: payload.notification?.body || payload.data?.body || "",
+    icon: '/favicon.ico'
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
 // 푸시 알림 클릭 시 실행
 self.addEventListener('notificationclick', function(event) {
   event.notification.close();

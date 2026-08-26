@@ -955,7 +955,6 @@ function confirmSave(){
   saveLocal();
   updateHeaderInfo();
   closeSaveModal();
-  alert("성공적으로 저장되었습니다.");
 
   if(window.sendPushNotification) {
     window.sendPushNotification("사장님", "📦 재고조사 완료", `${currentUser}님이 재고 조사를 완료했습니다.`);
@@ -1534,7 +1533,6 @@ function renderReqChoiceList(){
   `).join("");
 }
 
-/* 1번 수정: 알림 2번 오는 현상을 해결하기 위해 openBellNotice() 중복 호출을 제거 */
 function shareDataWithRequests(){
   const checkboxes = document.querySelectorAll(".req-choice-cb:checked");
   if(checkboxes.length === 0){
@@ -1551,7 +1549,6 @@ function shareDataWithRequests(){
   window.requestList = window.requestList.concat(newRequests);
 
   window.lastRequestBatchId = uid("batch");
-  localStorage.setItem(NOTIFICATION_SHOWN_KEY, window.lastRequestBatchId);
 
   saveLocal();
   closeRequestModal();
@@ -1741,7 +1738,9 @@ window.renderAll();
       if (serverData.requestList) window.requestList = serverData.requestList;
       if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
       if (serverData.categories) window.categories = serverData.categories;
-      if (serverData.lastRequestBatchId) window.lastRequestBatchId = serverData.lastRequestBatchId;
+      if (serverData.lastRequestBatchId !== undefined) {
+        window.lastRequestBatchId = serverData.lastRequestBatchId;
+      }
       
       if (serverData.lastActionTime) {
         window.lastActionTime = serverData.lastActionTime;
