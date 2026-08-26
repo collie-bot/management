@@ -12,12 +12,13 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// 백그라운드 메시지 수신 핸들러 (알림이 뜨지 않던 주요 원인 해결)
+// 백그라운드 메시지 수신 핸들러
 messaging.onBackgroundMessage(function(payload) {
   const notificationTitle = payload.notification?.title || payload.data?.title || "알림";
   const notificationOptions = {
     body: payload.notification?.body || payload.data?.body || "",
-    icon: '/favicon.ico'
+    icon: '/favicon.ico',
+    actions: [] // 차단 버튼 등의 액션 버튼을 제거하여 순수 알림만 표시되도록 수정 완료
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
@@ -43,3 +44,4 @@ self.addEventListener('notificationclick', function(event) {
     })
   );
 });
+```[cite: 6]
