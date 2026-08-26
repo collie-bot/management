@@ -925,10 +925,9 @@ function setupLogin(){
 }
 
 function startSurvey(){
-  setupLogin();
+  navTo('survey');
 }
 
-/* 3. 저장 버튼 클릭 시 이름 확인 모달 띄우기 */
 function handleManualSave(){
   const saveSelect = document.getElementById("saveUserSelect");
   if(window.userList.length === 0){
@@ -957,6 +956,10 @@ function confirmSave(){
   updateHeaderInfo();
   closeSaveModal();
   alert("성공적으로 저장되었습니다.");
+
+  if(window.sendPushNotification) {
+    window.sendPushNotification("사장님", "📦 재고조사 완료", `${currentUser}님이 재고 조사를 완료했습니다.`);
+  }
 }
 
 function login(){
@@ -973,10 +976,6 @@ function login(){
   saveLocal();
   updateHeaderInfo();
   renderAll();
-
-  if(window.sendPushNotification) {
-    window.sendPushNotification("사장님", "📦 재고조사 완료", `${currentUser}님이 재고 조사를 완료했습니다.`);
-  }
 }
 
 function registerBossNotification() {
@@ -1535,6 +1534,7 @@ function renderReqChoiceList(){
   `).join("");
 }
 
+/* 1번 수정: 알림 2번 오는 현상을 해결하기 위해 openBellNotice() 중복 호출을 제거 */
 function shareDataWithRequests(){
   const checkboxes = document.querySelectorAll(".req-choice-cb:checked");
   if(checkboxes.length === 0){
@@ -1557,8 +1557,6 @@ function shareDataWithRequests(){
   closeRequestModal();
   updateBellBadge();
 
-  openBellNotice();
-
   if(window.sendPushNotification) {
     window.sendPushNotification("사장님", "⚠️ 재료 요청 알림", `요청 재료: ${reqNames.join(", ")}`);
   }
@@ -1572,12 +1570,11 @@ function openBellNotice(){
   document.getElementById("noticeModal").classList.remove("hidden");
 }
 
-/* 2. 알림 창 확인 시 데이터 저장 및 Firebase 동기화 */
 function closeNoticeModal(){
   if(window.requestList.length > 0){
     window.requestList = window.requestList.filter(i => !i.checked);
   }
-  saveLocal(); // 로컬 및 Firebase에 정제된 요청 목록 반영
+  saveLocal();
   updateBellBadge();
   document.getElementById("noticeModal").classList.add("hidden");
 }
