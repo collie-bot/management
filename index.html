@@ -4,11 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>계근상 재고관리</title>
+<!-- Tailwind CSS (로그인 UI 전용) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{
   margin:0;
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background:#121212;
   color:#e0e0e0;
   font-size:15px;
@@ -269,10 +275,22 @@ header h1{
   font-weight:bold;
 }
 
-.login-overlay, .modal-overlay{
+/* 로그인 배경 완전 검은색으로 변경 */
+.login-overlay {
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.7);
+  background:#000000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+  padding:16px;
+}
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -497,10 +515,37 @@ input, select{
   </div>
 </div>
 
-<div id="loginOverlay" class="login-overlay hidden">
-  <div class="login-box">
-    <h2>확인자 선택</h2>
-    <select id="userSelectModal" onchange="login()"></select>
+<!-- 로그인 화면 (검은 배경 및 비밀번호 4자리 조건 적용) -->
+<div id="loginOverlay" class="login-overlay">
+  <div class="w-full max-w-sm px-4">
+    <div class="mb-6 text-center">
+      <h1 class="text-3xl font-bold text-white tracking-tight">계근상 재고관리</h1>
+    </div>
+
+    <form id="loginForm" onsubmit="handleAuthSubmit(event)" class="rounded-2xl p-6 flex flex-col gap-4" style="background: #111; border: 1px solid #1f1f1f">
+      <h2 id="authTitle" class="text-lg font-bold text-white text-center mb-2">로그인</h2>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium" style="color: #9ca3af">가게/사용자 이름</label>
+        <input type="text" id="authName" placeholder="이름을 입력하세요" class="rounded-lg px-3 py-2.5 text-sm text-white outline-none transition-all" style="background: #1a1a1a; border: 1px solid #2a2a2a" required />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label class="text-xs font-medium" style="color: #9ca3af">비밀번호 (숫자 4자리)</label>
+        <input type="password" id="authPassword" placeholder="숫자 4자리를 입력하세요" maxlength="4" pattern="[0-9]{4}" class="rounded-lg px-3 py-2.5 text-sm text-white outline-none transition-all" style="background: #1a1a1a; border: 1px solid #2a2a2a" required />
+      </div>
+
+      <p id="authError" class="text-xs text-red-400 hidden"></p>
+      <p id="authSuccess" class="text-xs text-emerald-400 font-medium hidden"></p>
+
+      <button type="submit" id="authSubmitBtn" class="mt-2 rounded-lg py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-95" style="background: #2563eb">
+        로그인
+      </button>
+
+      <button type="button" id="authToggleBtn" onclick="toggleAuthMode()" class="rounded-lg py-2 text-xs font-medium text-gray-400 hover:text-white transition-all" style="background: #1a1a1a; border: 1px solid #2a2a2a">
+        신규 가게/사용자 등록하기
+      </button>
+    </form>
   </div>
 </div>
 
@@ -565,6 +610,9 @@ input, select{
         </svg>
         <span id="bellBadge" class="bell-badge hidden">!</span>
       </button>
+    </div>
+    <div style="margin-top:20px; text-align:center;">
+      <button onclick="logout()" style="background:#333; color:#aaa; border:1px solid #444; padding:8px 16px; border-radius:6px; font-size:13px;">로그아웃</button>
     </div>
   </section>
 
@@ -752,28 +800,36 @@ input, select{
 </div>
 
 <script>
-const LOCAL_KEY="restaurant_inventory_v9";
-const USER_KEY="restaurant_inventory_user_v9";
-const USERS_LIST_KEY="restaurant_inventory_users_list_v9";
-const REQUEST_ITEMS_KEY="restaurant_inventory_request_items_v9";
-const REGISTERED_INGREDIENTS_KEY="restaurant_inventory_registered_ingredients_v9";
-const NOTIFICATION_SHOWN_KEY="restaurant_inventory_notification_shown_v9";
-const LAST_ACTION_TIME_KEY="restaurant_inventory_last_action_time_v9";
-const LAST_SAVE_DATE_KEY="restaurant_inventory_last_save_date_v9";
+// 기본 등록 사용자 관리 계정 및 가게 리스트 (초기 비밀번호 4자리 설정)
+const INITIAL_USERS = [
+  { id: 0, name: "관리자", password: "1234" },
+  { id: 1, name: "계근상", password: "1234" }
+];
 
-window.categories=[
+const LOCAL_KEY_PREFIX="restaurant_inventory_store_";
+const USERS_LIST_KEY="restaurant_inventory_users_list_v9";
+const ACCOUNTS_LIST_KEY="restaurant_inventory_accounts_v9";
+const NOTIFICATION_SHOWN_KEY="restaurant_inventory_notification_shown_v9";
+const CURRENT_USER_SESSION_KEY="restaurant_inventory_current_session_v9";
+
+// 기본 카테고리 템플릿
+const DEFAULT_CATEGORIES = [
   {id:"cat_1",name:"계근상"},
   {id:"cat_2",name:"김치찜"},
   {id:"cat_3",name:"밀면"}
 ];
 
+window.categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
 window.userList = [];
+window.accountsList = [];
 window.registeredIngredients = [];
-window.data={items:[],records:[],categories:[]};
-let currentUser="";
-let currentTab="home";
+window.data = {items:[], records:[], categories:[]};
+
+let currentUser = "";
+let currentTab = "home";
 let lastActionTime = "";
 let lastSaveDate = "";
+let authMode = "login"; // "login" or "register"
 
 window.requestList = [];
 
@@ -803,8 +859,6 @@ function localTime(){
 function recordActionTime(){
   lastActionTime = localTime();
   lastSaveDate = localDate();
-  localStorage.setItem(LAST_ACTION_TIME_KEY, lastActionTime);
-  localStorage.setItem(LAST_SAVE_DATE_KEY, lastSaveDate);
 }
 
 function uid(prefix){
@@ -849,73 +903,170 @@ window.normalizeData = function(){
 }
 
 function saveLocal(){
+  if(!currentUser) return;
   window.normalizeData();
   window.data.categories = window.categories;
-  localStorage.setItem(LOCAL_KEY,JSON.stringify(window.data));
-  localStorage.setItem(USERS_LIST_KEY, JSON.stringify(window.userList));
-  localStorage.setItem(REQUEST_ITEMS_KEY, JSON.stringify(window.requestList));
-  localStorage.setItem(REGISTERED_INGREDIENTS_KEY, JSON.stringify(window.registeredIngredients));
-  if(currentUser) localStorage.setItem(USER_KEY, currentUser);
-  if(lastActionTime) localStorage.setItem(LAST_ACTION_TIME_KEY, lastActionTime);
-  if(lastSaveDate) localStorage.setItem(LAST_SAVE_DATE_KEY, lastSaveDate);
+
+  const storeKey = LOCAL_KEY_PREFIX + currentUser;
+  const storeObj = {
+    data: window.data,
+    categories: window.categories,
+    userList: window.userList,
+    requestList: window.requestList,
+    registeredIngredients: window.registeredIngredients,
+    lastActionTime: lastActionTime,
+    lastSaveDate: lastSaveDate
+  };
+
+  localStorage.setItem(storeKey, JSON.stringify(storeObj));
+  localStorage.setItem(ACCOUNTS_LIST_KEY, JSON.stringify(window.accountsList));
+  localStorage.setItem(CURRENT_USER_SESSION_KEY, currentUser);
 
   if(window.saveToFirestore){
     window.saveToFirestore();
   }
 }
 
-function loadLocal(){
-  try{
-    const x=JSON.parse(localStorage.getItem(LOCAL_KEY));
-    if(x) window.data=x;
-  }catch(e){}
-  
-  try{
-    const uList=JSON.parse(localStorage.getItem(USERS_LIST_KEY));
-    if(Array.isArray(uList)) window.userList = uList;
-  }catch(e){}
+function loadLocalForUser(username){
+  currentUser = username;
+  const storeKey = LOCAL_KEY_PREFIX + currentUser;
+  const rawStore = localStorage.getItem(storeKey);
 
-  try{
-    const rList=JSON.parse(localStorage.getItem(REQUEST_ITEMS_KEY));
-    if(Array.isArray(rList)) window.requestList = rList;
-  }catch(e){}
-
-  try{
-    const ingList=JSON.parse(localStorage.getItem(REGISTERED_INGREDIENTS_KEY));
-    if(Array.isArray(ingList)) window.registeredIngredients = ingList;
-  }catch(e){}
-
-  const savedTime = localStorage.getItem(LAST_ACTION_TIME_KEY);
-  if(savedTime) lastActionTime = savedTime;
-
-  const savedDate = localStorage.getItem(LAST_SAVE_DATE_KEY);
-  if(savedDate) lastSaveDate = savedDate;
+  if(rawStore){
+    try {
+      const storeObj = JSON.parse(rawStore);
+      if(storeObj.data) window.data = storeObj.data;
+      if(storeObj.categories) window.categories = storeObj.categories;
+      if(storeObj.userList) window.userList = storeObj.userList;
+      if(storeObj.requestList) window.requestList = storeObj.requestList;
+      if(storeObj.registeredIngredients) window.registeredIngredients = storeObj.registeredIngredients;
+      if(storeObj.lastActionTime) lastActionTime = storeObj.lastActionTime;
+      if(storeObj.lastSaveDate) lastSaveDate = storeObj.lastSaveDate;
+    } catch(e){}
+  } else {
+    // 1. 신규 가게 등록 시 사용자에 가게 이름이 자동 등록되는 기능 제거
+    window.data = { items: [], records: [], categories: JSON.parse(JSON.stringify(DEFAULT_CATEGORIES)) };
+    window.categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+    window.userList = []; // 사용자 등록 목록에 가게 이름 자동 추가 안 함
+    window.requestList = [];
+    window.registeredIngredients = [];
+    lastActionTime = "";
+    lastSaveDate = "";
+    saveLocal();
+  }
 
   window.normalizeData();
+}
 
-  const savedUser = localStorage.getItem(USER_KEY);
-  if(savedUser && window.userList.includes(savedUser)){
-    currentUser = savedUser;
-  } else if(window.userList.length > 0){
-    currentUser = window.userList[0];
-  } else {
-    currentUser = "";
+function loadAccounts(){
+  try {
+    const raw = localStorage.getItem(ACCOUNTS_LIST_KEY);
+    if(raw) {
+      window.accountsList = JSON.parse(raw);
+    } else {
+      window.accountsList = INITIAL_USERS;
+      localStorage.setItem(ACCOUNTS_LIST_KEY, JSON.stringify(window.accountsList));
+    }
+  } catch(e){
+    window.accountsList = INITIAL_USERS;
   }
 }
 
-function populateUserSelectModal(){
-  const modalSelect = document.getElementById("userSelectModal");
-  if(window.userList.length === 0){
-    modalSelect.innerHTML = '<option value="">(등록된 사용자 없음)</option>';
+// --- 인증 관련 (로그인 / 회원가입) ---
+function toggleAuthMode(){
+  const title = document.getElementById("authTitle");
+  const btn = document.getElementById("authSubmitBtn");
+  const toggleBtn = document.getElementById("authToggleBtn");
+  const err = document.getElementById("authError");
+  const succ = document.getElementById("authSuccess");
+
+  err.classList.add("hidden");
+  succ.classList.add("hidden");
+
+  if(authMode === "login"){
+    authMode = "register";
+    title.textContent = "신규 회원 등록";
+    btn.textContent = "등록 완료";
+    toggleBtn.textContent = "로그인 화면으로 돌아가기";
   } else {
-    const sortedUsers = [...window.userList].sort(koreanSort);
-    const defaultOption = '<option value="" disabled selected>확인자 이름을 선택하세요</option>';
-    modalSelect.innerHTML = defaultOption + sortedUsers.map(u => `<option value="${esc(u)}">${esc(u)}</option>`).join("");
+    authMode = "login";
+    title.textContent = "로그인";
+    btn.textContent = "로그인";
+    toggleBtn.textContent = "신규 가게/사용자 등록하기";
   }
 }
 
-function setupLogin(){
-  populateUserSelectModal();
+function handleAuthSubmit(e){
+  e.preventDefault();
+  const nameInput = document.getElementById("authName");
+  const pwdInput = document.getElementById("authPassword");
+  const err = document.getElementById("authError");
+  const succ = document.getElementById("authSuccess");
+
+  const name = nameInput.value.trim();
+  const pwd = pwdInput.value.trim();
+
+  err.classList.add("hidden");
+  succ.classList.add("hidden");
+
+  if(!name || !pwd){
+    err.textContent = "이름과 비밀번호를 모두 입력해 주세요.";
+    err.classList.remove("hidden");
+    return;
+  }
+
+  // 3. 비밀번호 4자리(숫자) 검증 조건 추가
+  if (!/^\d{4}$/.test(pwd)) {
+    err.textContent = "비밀번호는 반드시 숫자 4자리여야 합니다.";
+    err.classList.remove("hidden");
+    return;
+  }
+
+  loadAccounts();
+
+  if(authMode === "login"){
+    const found = window.accountsList.find(acc => acc.name === name && acc.password === pwd);
+    if(found){
+      loginSuccess(found.name);
+    } else {
+      err.textContent = "이름 또는 비밀번호가 올바르지 않습니다.";
+      err.classList.remove("hidden");
+    }
+  } else {
+    const existing = window.accountsList.find(acc => acc.name === name);
+    if(existing){
+      err.textContent = "이미 등록된 이름입니다.";
+      err.classList.remove("hidden");
+      return;
+    }
+
+    const newAcc = { id: Date.now(), name: name, password: pwd };
+    window.accountsList.push(newAcc);
+    localStorage.setItem(ACCOUNTS_LIST_KEY, JSON.stringify(window.accountsList));
+
+    succ.textContent = `'${name}' 님이 성공적으로 등록되었습니다.`;
+    succ.classList.remove("hidden");
+
+    setTimeout(() => {
+      toggleAuthMode();
+      nameInput.value = name;
+      pwdInput.value = pwd;
+    }, 1000);
+  }
+}
+
+function loginSuccess(username){
+  document.getElementById("loginOverlay").classList.add("hidden");
+  loadLocalForUser(username);
+  updateHeaderInfo();
+  renderAll();
+}
+
+function logout(){
+  localStorage.removeItem(CURRENT_USER_SESSION_KEY);
+  currentUser = "";
+  document.getElementById("authName").value = "";
+  document.getElementById("authPassword").value = "";
   document.getElementById("loginOverlay").classList.remove("hidden");
 }
 
@@ -944,7 +1095,6 @@ function confirmSave(){
   const selectedName = document.getElementById("saveUserSelect").value;
   if(selectedName){
     currentUser = selectedName;
-    localStorage.setItem(USER_KEY, currentUser);
   }
   recordActionTime();
   saveLocal();
@@ -979,22 +1129,6 @@ function handleResetStock() {
   saveLocal();
   renderSurvey();
   updateHeaderInfo();
-}
-
-function login(){
-  const selectedName = document.getElementById("userSelectModal").value;
-  if(!selectedName){
-    document.getElementById("loginOverlay").classList.add("hidden");
-    return;
-  }
-  
-  currentUser = selectedName;
-  localStorage.setItem(USER_KEY, currentUser);
-  document.getElementById("loginOverlay").classList.add("hidden");
-  recordActionTime();
-  saveLocal();
-  updateHeaderInfo();
-  renderAll();
 }
 
 function toggleSection(contentId, arrowId) {
@@ -1277,7 +1411,6 @@ function editUser(idx){
     window.userList[idx] = trimmed;
     if(currentUser === oldName) {
       currentUser = trimmed;
-      localStorage.setItem(USER_KEY, currentUser);
     }
     
     window.data.items.forEach(i => {
@@ -1296,7 +1429,6 @@ function deleteUser(idx){
   window.userList.splice(idx, 1);
   if(currentUser === target){
     currentUser = window.userList.length > 0 ? window.userList[0] : "";
-    localStorage.setItem(USER_KEY, currentUser);
   }
   saveLocal();
   renderUserMgmt();
@@ -1414,10 +1546,6 @@ document.getElementById("userForm").addEventListener("submit", e => {
 
   if(!window.userList.includes(name)){
     window.userList.push(name);
-    if(!currentUser) {
-      currentUser = name;
-      localStorage.setItem(USER_KEY, currentUser);
-    }
     saveLocal();
     renderUserMgmt();
     updateHeaderInfo();
@@ -1647,10 +1775,19 @@ window.renderAll = function(){
   if(currentTab === 'status') renderStatus();
 }
 
-loadLocal();
+// 앱 초기 시작
+function initApp(){
+  loadAccounts();
+  const sessionUser = localStorage.getItem(CURRENT_USER_SESSION_KEY);
+  if(sessionUser){
+    loginSuccess(sessionUser);
+  } else {
+    document.getElementById("loginOverlay").classList.remove("hidden");
+  }
+}
 
 navTo('home');
-window.renderAll();
+initApp();
 
 </script>
 
@@ -1672,17 +1809,20 @@ window.renderAll();
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const messaging = getMessaging(app);
-  const mainDocRef = doc(db, "inventory_app", "main_data");
 
-  // 중복 수신 방지 플래그 변수
+  // 가게별 독립 Document 참조
+  function getMainDocRef(){
+    if(!currentUser) return null;
+    return doc(db, "inventory_app", "main_data_" + currentUser);
+  }
+
   let lastHandledBatchId = null;
 
-  // 포그라운드 메시지 수신 시 중복 알림 방지 처리
   onMessage(messaging, (payload) => {
     console.log('Foreground message received. ', payload);
     const batchId = payload.data?.batchId || payload.notification?.body;
     if (batchId && batchId === lastHandledBatchId) {
-      return; // 중복 수신 시 무시
+      return;
     }
     if (batchId) {
       lastHandledBatchId = batchId;
@@ -1712,7 +1852,10 @@ window.renderAll();
   };
 
   window.saveToFirestore = function() {
-    setDoc(mainDocRef, {
+    const docRef = getMainDocRef();
+    if(!docRef) return;
+
+    setDoc(docRef, {
       data: window.data,
       userList: window.userList,
       currentUser: currentUser || "",
@@ -1720,43 +1863,11 @@ window.renderAll();
       registeredIngredients: window.registeredIngredients,
       categories: window.categories,
       lastRequestBatchId: window.lastRequestBatchId || null,
-      lastActionTime: localStorage.getItem("restaurant_inventory_last_action_time_v9") || "",
-      lastSaveDate: localStorage.getItem("restaurant_inventory_last_save_date_v9") || "",
+      lastActionTime: lastActionTime || "",
+      lastSaveDate: lastSaveDate || "",
       updatedAt: new Date().toISOString()
     }).catch(err => console.error("Firebase 저장 실패:", err));
   };
-  
-  onSnapshot(mainDocRef, (docSnap) => {
-    if (docSnap.exists()) {
-      const serverData = docSnap.data();
-      if (serverData.data) window.data = serverData.data;
-      if (serverData.userList) window.userList = serverData.userList;
-      if (serverData.currentUser !== undefined) {
-        currentUser = serverData.currentUser;
-        localStorage.setItem("restaurant_inventory_user_v9", currentUser);
-      }
-      if (serverData.requestList) window.requestList = serverData.requestList;
-      if (serverData.registeredIngredients) window.registeredIngredients = serverData.registeredIngredients;
-      if (serverData.categories) window.categories = serverData.categories;
-      if (serverData.lastRequestBatchId !== undefined) {
-        window.lastRequestBatchId = serverData.lastRequestBatchId;
-      }
-      
-      if (serverData.lastActionTime) {
-        window.lastActionTime = serverData.lastActionTime;
-        localStorage.setItem("restaurant_inventory_last_action_time_v9", serverData.lastActionTime);
-      }
-      if (serverData.lastSaveDate) {
-        window.lastSaveDate = serverData.lastSaveDate;
-        localStorage.setItem("restaurant_inventory_last_save_date_v9", serverData.lastSaveDate);
-      }
-      
-      if(window.normalizeData) window.normalizeData();
-      if(window.renderAll) window.renderAll();
-    }
-  }, (err) => {
-    console.error("Firestore 실시간 수신 오류:", err);
-  });
 </script>
 </body>
 </html>
